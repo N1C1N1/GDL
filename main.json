@@ -1,4 +1,7 @@
 {
   "version" : "0.1",
-  "message" : "Hello, world!"
+  "message" : "Hello, world!",
+  "links" : {
+    "discord-server" : "https://discord.gg/Zedkk6tV67"
+  }
 }
