@@ -1,0 +1,6 @@
+{
+    "ReplayBot" : {
+        "file" : "replaybot.dll",
+        "type" : "ext"
+    }
+}
