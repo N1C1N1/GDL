@@ -3,5 +3,10 @@
         "file" : "replaybot.dll",
         "type" : "ext",
         "requests" : "MOD"
+    },
+    "BetterEdit" : {
+        "file" : "BE.dll",
+        "type" : "ext",
+        "requests" : "MOD"
     }
 }
