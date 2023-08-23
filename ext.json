@@ -1,6 +1,7 @@
 {
     "ReplayBot" : {
         "file" : "replaybot.dll",
-        "type" : "ext"
+        "type" : "ext",
+        "requests" : "MOD"
     }
 }
