@@ -2,11 +2,13 @@
     "ReplayBot" : {
         "file" : "replaybot.dll",
         "type" : "ext",
-        "requests" : "MOD"
+        "requests" : "MOD",
+        "discription" : "Simple GD Bot"
     },
     "BetterEdit" : {
         "file" : "BE.dll",
         "type" : "ext",
-        "requests" : "MOD"
+        "requests" : "MOD",
+        "discription" : "Creator addons"
     }
 }
