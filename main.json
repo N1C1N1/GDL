@@ -21,10 +21,10 @@
       "files" : ["discord_game_sdk.dll", "GDMenu.dll", "INSTALLATION.txt", "minhook.x32.dll", "portaudio_x86.dll", "sndfile.dll", "xinput9_1_0.dll"],
       "paths" : ["GDMenu"]
     },
+  },
   "tp" : {
     "SSOHV3" : {
       "link" : ""
     }
-  }
   }
 }
