@@ -6,7 +6,7 @@
   },
   "mod-menus" : {
     "GDHM" : {
-      "link" : "https://adaf.xyz/adaf/hm/download/v35.6/8705cae3fff101c2bb6c884f5c68bda983c0955d7fa477692424cd2c727cafea/GDHM_TASBOT_v35.6.zip",
+      "link" : "https://drive.google.com/u/0/uc?id=1jOjVwmM-ESpjT5f2hEIWJHK-K2Ea2Dy3&export=download&confirm=t&uuid=5460963f-8c47-4673-a0ab-50c76d063f29&at=AB6BwCCJLsmbZQ82rY5NfAT6ida9:1693491478512",
       "disk-ru" : "Мод меню с множеством функций, имееться ГДБОТ но с водяным знаком",
       "disk-en" : "Menu mod with many functions, has GDBOT",
       "screenshot" : "https://geometrya-dash.ru/wp-content/uploads/2022/12/screen-537-1024x473-1.jpg",
@@ -20,6 +20,11 @@
       "screenshot" : "https://geometrya-dash.ru/wp-content/uploads/2022/12/screen-537-1024x473-1.jpg",
       "files" : ["discord_game_sdk.dll", "GDMenu.dll", "INSTALLATION.txt", "minhook.x32.dll", "portaudio_x86.dll", "sndfile.dll", "xinput9_1_0.dll"],
       "paths" : ["GDMenu"]
+    },
+  "tp" : {
+    "SSOHV3" : {
+      "link" : ""
     }
+  }
   }
 }
