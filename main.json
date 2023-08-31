@@ -17,7 +17,7 @@
         "link" : "https://drive.google.com/u/0/uc?id=1E8jJKdd-OQqubdaIrMZ5XWGZv8a-KIPN&export=download&confirm=t&uuid=0265180b-a9aa-4fda-903f-b8618ef58885&at=AB6BwCDxkoPsepPD9EnRZ78KVlSf:1693469934930",
         "disk-ru" : "Мод меню, имееться бесплатный ГДБОТ, show trajectory",
         "disk-en" : "Menu mod with many functions, has GDBOT",
-        "screenshot" : "https://geometrya-dash.ru/wp-content/uploads/2022/12/screen-537-1024x473-1.jpg",
+        "screenshot" : "https://github.com/maxnut/GDMegaOverlay/raw/main/docs/img/screen.jpg",
         "files" : ["discord_game_sdk.dll", "GDMenu.dll", "INSTALLATION.txt", "minhook.x32.dll", "portaudio_x86.dll", "sndfile.dll", "xinput9_1_0.dll"],
         "paths" : ["GDMenu"]
       }
