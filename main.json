@@ -24,7 +24,9 @@
     },
     "tp" : {
       "SSOHV3" : {
-        "link" : "ass"
+        "link" : "ass",
+        "screenshot" : "https://i.ytimg.com/vi/REHYDi6Sjhc/maxresdefault.jpg"
+        
       }
     }
   }
