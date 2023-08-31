@@ -15,7 +15,7 @@
             "discription-ru" : "Дополнения для креаторства"
         },
         "textureLDR" : {
-            "link" : "https://cdn.discordapp.com/attachments/1058610285516161146/1146817304185815172/textureldr.dll"
+            "link" : "https://cdn.discordapp.com/attachments/1058610285516161146/1146817304185815172/textureldr.dll",
             "files" : "textureldr.dll",
             "type" : "mod",
             "discription-en" : "Texture Switcher",
