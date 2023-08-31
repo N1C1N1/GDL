@@ -2,14 +2,14 @@
     "mods" : {
         "ReplayBot" : {
             "link" : "https://cdn.discordapp.com/attachments/1136980136277839942/1146667002631569418/replay-bot.dll",
-            "files" : ["replay-bot.dll"],
+            "files" : "replay-bot.dll",
             "type" : "bot",
             "discription-en" : "Simple GD Bot",
             "discription-ru" : "Простой ГД Бот"
         },
         "BetterEdit" : {
             "link" : "https://cdn.discordapp.com/attachments/837026406282035300/960624624377397278/BetterEdit-v4.0.5.zip",
-            "files" : ["BetterEdit-v4.0.5.dll", "BetterEdit-v4.0.5-min.dll"],
+            "files" : "BetterEdit-v4.0.5.dll",
             "type" : "bot",
             "discription-en" : "Creator addons",
             "discription-ru" : "Дополнения для креаторства"
