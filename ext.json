@@ -1,14 +1,21 @@
 {
-    "ReplayBot" : {
-        "file" : "replaybot.dll",
-        "type" : "ext",
-        "requests" : "MOD",
-        "discription" : "Simple GD Bot"
+    "mods" : {
+        "ReplayBot" : {
+            "files" : ["replaybot.dll"],
+            "type" : "bot",
+            "discription-en" : "Simple GD Bot",
+            "discription-en" : "Простой ГД Бот"
+        },
+        "BetterEdit" : {
+            "files" : ["BE.dll"],
+            "type" : "bot",
+            "discription-en" : "Creator addons",
+            "discription-ru" : "Дополнения для креаторства"
+        }
     },
-    "BetterEdit" : {
-        "file" : "BE.dll",
-        "type" : "ext",
-        "requests" : "MOD",
-        "discription" : "Creator addons"
+    "tp" : {
+        
+    },
+    "others" : {
     }
 }
