@@ -4,7 +4,7 @@
             "files" : ["replaybot.dll"],
             "type" : "bot",
             "discription-en" : "Simple GD Bot",
-            "discription-en" : "Простой ГД Бот"
+            "discription-ru" : "Простой ГД Бот"
         },
         "BetterEdit" : {
             "files" : ["BE.dll"],
