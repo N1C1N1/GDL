@@ -1,8 +1,8 @@
 {
     "mods" : {
         "ReplayBot" : {
-            "link" : "",
-            "files" : ["replaybot.dll"],
+            "link" : "https://cdn.discordapp.com/attachments/1136980136277839942/1146667002631569418/replay-bot.dll",
+            "files" : ["replay-bot.dll"],
             "type" : "bot",
             "discription-en" : "Simple GD Bot",
             "discription-ru" : "Простой ГД Бот"
