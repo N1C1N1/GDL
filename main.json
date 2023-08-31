@@ -1,30 +1,31 @@
 {
-  "version" : "0.1",
-  "message" : "Hello, world!",
-  "links" : {
-    "discord-server" : "https://discord.gg/Zedkk6tV67"
-  },
-  "mod-menus" : {
-    "GDHM" : {
-      "link" : "https://drive.google.com/u/0/uc?id=1jOjVwmM-ESpjT5f2hEIWJHK-K2Ea2Dy3&export=download&confirm=t&uuid=5460963f-8c47-4673-a0ab-50c76d063f29&at=AB6BwCCJLsmbZQ82rY5NfAT6ida9:1693491478512",
-      "disk-ru" : "Мод меню с множеством функций, имееться ГДБОТ но с водяным знаком",
-      "disk-en" : "Menu mod with many functions, has GDBOT",
-      "screenshot" : "https://geometrya-dash.ru/wp-content/uploads/2022/12/screen-537-1024x473-1.jpg",
-      "files" : ["chrome_elf.dll", "icudtl.dat", "libcef.dll", "libGLESv2.dll", "msacm32.dll", "resources.pak", "RoastedMarshmellow.dll", "ToastedMarshmellow.dll"],
-      "paths" : ["locales", "ffmpeg", ".GDHM"]
+    "version" : "0.1",
+    "message" : "Hello, world!",
+    "links" : {
+      "discord-server" : "https://discord.gg/Zedkk6tV67"
     },
-    "GDMO" : {
-      "link" : "https://drive.google.com/u/0/uc?id=1E8jJKdd-OQqubdaIrMZ5XWGZv8a-KIPN&export=download&confirm=t&uuid=0265180b-a9aa-4fda-903f-b8618ef58885&at=AB6BwCDxkoPsepPD9EnRZ78KVlSf:1693469934930",
-      "disk-ru" : "Мод меню, имееться бесплатный ГДБОТ, show trajectory",
-      "disk-en" : "Menu mod with many functions, has GDBOT",
-      "screenshot" : "https://geometrya-dash.ru/wp-content/uploads/2022/12/screen-537-1024x473-1.jpg",
-      "files" : ["discord_game_sdk.dll", "GDMenu.dll", "INSTALLATION.txt", "minhook.x32.dll", "portaudio_x86.dll", "sndfile.dll", "xinput9_1_0.dll"],
-      "paths" : ["GDMenu"]
+    "mod-menus" : {
+      "GDHM" : {
+        "link" : "https://drive.google.com/u/0/uc?id=1jOjVwmM-ESpjT5f2hEIWJHK-K2Ea2Dy3&export=download&confirm=t&uuid=5460963f-8c47-4673-a0ab-50c76d063f29&at=AB6BwCCJLsmbZQ82rY5NfAT6ida9:1693491478512",
+        "disk-ru" : "Мод меню с множеством функций, имееться ГДБОТ но с водяным знаком",
+        "disk-en" : "Menu mod with many functions, has GDBOT",
+        "screenshot" : "https://geometrya-dash.ru/wp-content/uploads/2022/12/screen-537-1024x473-1.jpg",
+        "files" : ["chrome_elf.dll", "icudtl.dat", "libcef.dll", "libGLESv2.dll", "msacm32.dll", "resources.pak", "RoastedMarshmellow.dll", "ToastedMarshmellow.dll"],
+        "paths" : ["locales", "ffmpeg", ".GDHM"]
+      },
+      "GDMO" : {
+        "link" : "https://drive.google.com/u/0/uc?id=1E8jJKdd-OQqubdaIrMZ5XWGZv8a-KIPN&export=download&confirm=t&uuid=0265180b-a9aa-4fda-903f-b8618ef58885&at=AB6BwCDxkoPsepPD9EnRZ78KVlSf:1693469934930",
+        "disk-ru" : "Мод меню, имееться бесплатный ГДБОТ, show trajectory",
+        "disk-en" : "Menu mod with many functions, has GDBOT",
+        "screenshot" : "https://geometrya-dash.ru/wp-content/uploads/2022/12/screen-537-1024x473-1.jpg",
+        "files" : ["discord_game_sdk.dll", "GDMenu.dll", "INSTALLATION.txt", "minhook.x32.dll", "portaudio_x86.dll", "sndfile.dll", "xinput9_1_0.dll"],
+        "paths" : ["GDMenu"]
+      }
     },
-  },
-  "tp" : {
-    "SSOHV3" : {
-      "link" : "aaa"
+    "tp" : {
+      "SSOHV3" : {
+        "link" : "aaa"
+      }
     }
   }
-}
+  
