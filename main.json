@@ -9,7 +9,7 @@
         "link" : "https://drive.google.com/u/0/uc?id=1jOjVwmM-ESpjT5f2hEIWJHK-K2Ea2Dy3&export=download&confirm=t&uuid=5460963f-8c47-4673-a0ab-50c76d063f29&at=AB6BwCCJLsmbZQ82rY5NfAT6ida9:1693491478512",
         "disk-ru" : "Мод меню с множеством функций, имееться ГДБОТ но с водяным знаком",
         "disk-en" : "Menu mod with many functions, has GDBOT",
-        "screenshot" : "https://geometrya-dash.ru/wp-content/uploads/2022/12/screen-537-1024x473-1.jpg",
+        "screenshot" : "https://i.imgur.com/KAGOgf2.png",
         "files" : ["chrome_elf.dll", "icudtl.dat", "libcef.dll", "libGLESv2.dll", "msacm32.dll", "resources.pak", "RoastedMarshmellow.dll", "ToastedMarshmellow.dll"],
         "paths" : ["locales", "ffmpeg", ".GDHM"]
       },
