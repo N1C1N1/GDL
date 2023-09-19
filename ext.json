@@ -13,14 +13,16 @@
             "files" : "BetterEdit-v4.0.5.dll",
             "type" : "mod",
             "discription-en" : "Creator addons",
-            "discription-ru" : "Дополнения для креаторства"
+            "discription-ru" : "Дополнения для креаторства",
+            "img" : ""
         },
         "textureLDR" : {
             "link" : "https://cdn.discordapp.com/attachments/1058610285516161146/1146817304185815172/textureldr.dll",
             "files" : "textureldr.dll",
             "type" : "mod",
             "discription-en" : "Texture Switcher",
-            "discription-ru" : "Свичер текстур"
+            "discription-ru" : "Свичер текстур",
+            "img" : ""
         }
     }
 }
