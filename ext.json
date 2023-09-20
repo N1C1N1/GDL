@@ -8,6 +8,14 @@
             "discription-ru" : "Простой ГД Бот",
             "img" : "https://user-images.githubusercontent.com/26722564/163655008-902d4d13-a284-4c2d-99d8-34fa5c699757.png"
         },
+        "Menu Shaders" : {
+            "link" : "https://cdn.discordapp.com/attachments/1122321217030979685/1154046729235202128/menu-shaders.dll",
+            "files" : "menu-shaders.dll",
+            "type" : "mod",
+            "discription-en" : "Adds shaders to the main menu",
+            "discription-ru" : "Добавляет шейдеры в главное меню",
+            "img" : ""
+        },
         "BetterEdit" : {
             "link" : "https://cdn.discordapp.com/attachments/837026406282035300/960624624377397278/BetterEdit-v4.0.5.zip",
             "files" : "BetterEdit-v4.0.5.dll",
@@ -23,6 +31,70 @@
             "discription-en" : "Texture Switcher",
             "discription-ru" : "Свичер текстур",
             "img" : ""
-        }
+        },
+        "Scroll Any Input" : {
+            "link" : "https://cdn.discordapp.com/attachments/879435504653840424/879435852630085651/ScrollAnyInput-v1.1.dll",
+            "files" : "ScrollAnyInput-v1.1.dll",
+            "type" : "mod",
+            "discription-en" : "Allows you to scroll on any numerical input to increase/decrease it.",
+            "discription-ru" : "Позволяет прокручивать любой числовой ввод для его увеличения/уменьшения.",
+            "img" : ""
+        },
+        "Remove Endscreen" : {
+            "link" : "https://cdn.discordapp.com/attachments/822518226307121202/1040980119679946833/remove-endscreen.dll",
+            "files" : "remove-endscreen.dll",
+            "type" : "mod",
+            "discription-en" : "Removes the endscreen when finishing a level. ",
+            "discription-ru" : "Убирает конечный экран при завершении уровня.",
+            "img" : ""
+        },
+        "Volume Control" : {
+            "link" : "https://cdn.discordapp.com/attachments/837026406282035300/869327712467185714/VolumeControl.dll",
+            "files" : "VolumeControl.dll",
+            "type" : "mod",
+            "discription-en" : "Allows you to alt + scroll to change the volume level",
+            "discription-ru" : "Позволяет с помощью клавиш alt + scroll изменять уровень громкости.",
+            "img" : ""
+        },
+        "Every Key Jump" : {
+            "link" : "https://cdn.discordapp.com/attachments/1122321217030979685/1154044241232793630/every-key-jumps.dll",
+            "files" : "every-key-jumps.dll",
+            "type" : "mod",
+            "discription-en" : "Allows you to use any key to jump. (Incompatible with some mods)",
+            "discription-ru" : "Позволяет использовать любую клавишу для прыжка. (Несовместимо с некоторыми модами)",
+            "img" : ""
+        },
+        "Scene Switcher" : {
+            "link" : "https://cdn.discordapp.com/attachments/837026406282035300/898684171503939584/SceneSwitcher-v1.1.dll",
+            "files" : "SceneSwitcher-v1.1.dll",
+            "type" : "mod",
+            "discription-en" : "Lets you switch between scenes quickly by holding Caps Lock",
+            "discription-ru" : "Позволяет быстро переключаться между сценами, удерживая клавишу Caps Lock",
+            "img" : ""
+        },
+        "Custom Splash Screen Messages" : {
+            "link" : "https://cdn.discordapp.com/attachments/837026406282035300/874668273956974682/CustomSplash.dll",
+            "files" : "CustomSplash.dll",
+            "type" : "mod",
+            "discription-en" : "Allows you to have custom splash screen messages",
+            "discription-ru" : "Позволяет создавать пользовательские сообщения на экране",
+            "img" : ""
+        },
+        "FadeMusicOnDeath" : {
+            "link" : "https://cdn.discordapp.com/attachments/1122321217030979685/1154045046769848371/FadeMusicOnDeath.dll",
+            "files" : "FadeMusicOnDeath.dll",
+            "type" : "mod",
+            "discription-en" : "Makes the music slow down when you crash, instead of a full stop.",
+            "discription-ru" : "Замедление музыки при разбивании вместо полной остановки.",
+            "img" : ""
+        },
+        "Infinite Mode" : {
+            "link" : "https://cdn.discordapp.com/attachments/1122321217030979685/1154046329220235334/InfiniteMode.dll",
+            "files" : "InfiniteMode.dll",
+            "type" : "mod",
+            "discription-en" : "Play your way through a series of levels that get aggressively harder",
+            "discription-ru" : "Пройдите ряд уровней, которые становятся все сложнее и сложнее",
+            "img" : ""
+        },
     }
 }
