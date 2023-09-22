@@ -32,22 +32,6 @@
             "discription-ru" : "Свичер текстур",
             "img" : ""
         },
-        "Scroll Any Input" : {
-            "link" : "https://cdn.discordapp.com/attachments/879435504653840424/879435852630085651/ScrollAnyInput-v1.1.dll",
-            "files" : "ScrollAnyInput-v1.1.dll",
-            "type" : "mod",
-            "discription-en" : "Allows you to scroll on any numerical input to increase/decrease it.",
-            "discription-ru" : "Позволяет прокручивать любой числовой ввод для его увеличения/уменьшения.",
-            "img" : ""
-        },
-        "Remove Endscreen" : {
-            "link" : "https://cdn.discordapp.com/attachments/822518226307121202/1040980119679946833/remove-endscreen.dll",
-            "files" : "remove-endscreen.dll",
-            "type" : "mod",
-            "discription-en" : "Removes the endscreen when finishing a level. ",
-            "discription-ru" : "Убирает конечный экран при завершении уровня.",
-            "img" : ""
-        },
         "Volume Control" : {
             "link" : "https://cdn.discordapp.com/attachments/837026406282035300/869327712467185714/VolumeControl.dll",
             "files" : "VolumeControl.dll",
@@ -64,6 +48,22 @@
             "discription-ru" : "Позволяет использовать любую клавишу для прыжка. (Несовместимо с некоторыми модами)",
             "img" : ""
         },
+        "BetterPause": {
+            "link" : "https://cdn.discordapp.com/attachments/1122321217030979685/1154726290738397204/BetterPause.dll",
+            "files" : "BetterPause.dll",
+            "type" : "mod",
+            "discription-en" : "A mod that expands the pause menu.",
+            "discription-ru" : "Мод, расширяющий меню паузы.",
+            "img" : ""
+        },
+        "Scroll Any Input" : {
+            "link" : "https://cdn.discordapp.com/attachments/879435504653840424/879435852630085651/ScrollAnyInput-v1.1.dll",
+            "files" : "ScrollAnyInput-v1.1.dll",
+            "type" : "mod",
+            "discription-en" : "Allows you to scroll on any numerical input to increase/decrease it.",
+            "discription-ru" : "Позволяет прокручивать любой числовой ввод для его увеличения/уменьшения.",
+            "img" : ""
+        },
         "Scene Switcher" : {
             "link" : "https://cdn.discordapp.com/attachments/837026406282035300/898684171503939584/SceneSwitcher-v1.1.dll",
             "files" : "SceneSwitcher-v1.1.dll",
@@ -78,6 +78,14 @@
             "type" : "mod",
             "discription-en" : "Allows you to have custom splash screen messages",
             "discription-ru" : "Позволяет создавать пользовательские сообщения на экране",
+            "img" : ""
+        },
+        "Remove Endscreen" : {
+            "link" : "https://cdn.discordapp.com/attachments/822518226307121202/1040980119679946833/remove-endscreen.dll",
+            "files" : "remove-endscreen.dll",
+            "type" : "mod",
+            "discription-en" : "Removes the endscreen when finishing a level. ",
+            "discription-ru" : "Убирает конечный экран при завершении уровня.",
             "img" : ""
         },
         "FadeMusicOnDeath" : {
