@@ -40,6 +40,22 @@
             "discription-ru" : "Позволяет с помощью клавиш alt + scroll изменять уровень громкости.",
             "img" : ""
         },
+        "TasBot No Wattermark" : {
+            "link" : "https://cdn.discordapp.com/attachments/1091746332613554257/1156852693374083152/TasBotWatermark.dll",
+            "files" : "TasBotWatermark.dll",
+            "type" : "mod",
+            "discription-en" : "Removes 'Replay by tasbot' when using TasBot",
+            "discription-ru" : "Убирает 'Replay by tasbot' при использовании TasBot",
+            "img" : ""
+        },
+        "SongControl" : {
+            "link" : "https://cdn.discordapp.com/attachments/1122321217030979685/1156937646233354260/SongControl.dll",
+            "files" : "SongControl.dll",
+            "type" : "mod",
+            "discription-en" : "Adds various features to interact with downloaded music",
+            "discription-ru" : "Добавляет различные функции для взаимодействия с загруженной музыкой",
+            "img" : "https://user-images.githubusercontent.com/84187852/270809421-32deae33-fc5c-4f89-9628-0c6f7fd98259.png"
+        },
         "Every Key Jump" : {
             "link" : "https://cdn.discordapp.com/attachments/1122321217030979685/1154044241232793630/every-key-jumps.dll",
             "files" : "every-key-jumps.dll",
