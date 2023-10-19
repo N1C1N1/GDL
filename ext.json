@@ -59,7 +59,7 @@
         "SongControl" : {
             "link" : "https://cdn.discordapp.com/attachments/1122321217030979685/1156937646233354260/SongControl.dll",
             "files" : "SongControl.dll",
-            "type" : "mod",
+            "type" : "bypass",
             "discription-en" : "Adds various features to interact with downloaded music",
             "discription-ru" : "Добавляет различные функции для взаимодействия с загруженной музыкой",
             "img" : "https://user-images.githubusercontent.com/84187852/270809421-32deae33-fc5c-4f89-9628-0c6f7fd98259.png"
@@ -67,7 +67,7 @@
         "Every Key Jump" : {
             "link" : "https://cdn.discordapp.com/attachments/1122321217030979685/1154044241232793630/every-key-jumps.dll",
             "files" : "every-key-jumps.dll",
-            "type" : "mod",
+            "type" : "bypass",
             "discription-en" : "Allows you to use any key to jump. (Incompatible with some mods)",
             "discription-ru" : "Позволяет использовать любую клавишу для прыжка. (Несовместимо с некоторыми модами)",
             "img" : ""
@@ -107,7 +107,7 @@
         "Remove Endscreen" : {
             "link" : "https://cdn.discordapp.com/attachments/822518226307121202/1040980119679946833/remove-endscreen.dll",
             "files" : "remove-endscreen.dll",
-            "type" : "mod",
+            "type" : "bypass",
             "discription-en" : "Removes the endscreen when finishing a level. ",
             "discription-ru" : "Убирает конечный экран при завершении уровня.",
             "img" : ""
