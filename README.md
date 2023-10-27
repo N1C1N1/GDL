@@ -1,5 +1,5 @@
-![EN1](https://github.com/N1C1N1/GDL/assets/116889092/6c61e458-86f8-4c6f-9891-0d67f3e696e6)
-![EN2](https://github.com/N1C1N1/GDL/assets/116889092/b960a863-d028-4ba3-811b-31b298ca4923)
+![EN1](https://github.com/N1C1N1/GDL/assets/116889092/162d84d5-d9a3-40da-a747-91e4645c7440)
+![EN2](https://github.com/N1C1N1/GDL/assets/116889092/ac4d399c-0512-40c5-9a6d-d0726d7ddee8)
 
 - Русский
 
