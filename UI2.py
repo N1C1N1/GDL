@@ -5,15 +5,15 @@ from bs4 import BeautifulSoup
 from translate import Translator
 
 bsus = requests.get('https://raw.githubusercontent.com/N1C1N1/GDL/main/main.json').json()
-__verison__ = 1.0
+__verison__ = 1.15
 
 try:
     with open('launcher.json', 'r') as f:
         CFG = json.loads(f.read())
 except:
     with open('launcher.json', 'w', encoding='UTF-8') as f:
-        json.dump({"path": "", "theme": "light", "lang": "RU"}, f, indent=4)
-        CFG = {"path": "", "theme": "light", "lang": "RU"}
+        json.dump({"path": "", "theme": "light", "lang": "EN", "color" : "blue"}, f, indent=4)
+        CFG = {"path": "", "theme": "light", "lang": "EN", "color" : "blue"}
 GDpath = CFG["path"]
 
 if GDpath != "":
@@ -60,7 +60,7 @@ class translates:
     menus = 'Менюшки' if tlang == 'RU' else 'Menus'
     mods = 'Моды' if tlang == 'RU' else 'Mods'
     TP = 'Текстур паки' if tlang == 'RU' else 'Texture packs'
-    settings = 'Насройки' if tlang == 'RU' else 'Settings'
+    settings = 'Настройки' if tlang == 'RU' else 'Settings'
     main = 'Главная' if tlang == 'RU' else 'Main'
     lang = 'Язык' if tlang == 'RU' else 'language'
     welcome = 'Привет, для продолжения укажи путь к ГД и нажми применить!' if tlang == 'RU' else 'Hi, to continue, specify the path to the GD and click apply!'
@@ -76,8 +76,11 @@ class translates:
     mods_clickbot = 'Клик боты' if tlang == 'RU' else 'Click bots'
     mods_bypass = 'Байпасы' if tlang == 'RU' else 'Bypasses'
     lists = 'Листы' if tlang == 'RU' else 'Lists'
-    list_main = 'Поинтер' if tlang == 'RU' else 'Pointer'
+    list_global = 'Глобал' if tlang == 'RU' else 'Global'
+    list_pointer = 'Поинтер' if tlang == 'RU' else 'Pointer'
     list_challenges = 'Челендж' if tlang == 'RU' else 'Challenge'
+    deleted = 'был удалён' if tlang == 'RU' else 'has been deleted'
+    installed = 'установлен' if tlang == 'RU' else 'installed'
 
 
 buttonstyle = ft.ButtonStyle(shape={ft.MaterialState.HOVERED: ft.RoundedRectangleBorder(radius=10),
@@ -88,15 +91,22 @@ def main(page: ft.Page):
     page.title = 'GDL'
     page.window_width, page.window_height = 500, 600
     page.theme_mode = ft.ThemeMode.LIGHT if CFG["theme"] != "dark" else ft.ThemeMode.DARK
-    page.scroll = True
-
+    page.scroll = ft.ScrollMode.ALWAYS
     page.fonts = {
         'Ubuntu': 'https://raw.githubusercontent.com/google/fonts/master/ufl/ubuntu/Ubuntu-Regular.ttf',
         'Lato-Regular': "https://github.com/google/fonts/raw/main/ofl/lato/Lato-Regular.ttf",
         'Lato-Bold': "https://github.com/google/fonts/raw/main/ofl/lato/Lato-Bold.ttf"
     }
     page.window_title_bar_hidden = True
-    page.theme = ft.Theme(font_family="Lato-Regular", use_material3=True)
+
+    def open_snack_bar(text: str):
+        page.snack_bar = ft.SnackBar(
+            content=ft.Text(value=text),
+            duration=3000
+        )
+        page.snack_bar.open = True
+        page.update()
+    page.theme = ft.Theme(font_family="Lato-Regular", color_scheme_seed=CFG["color"])
     tool_bar_title = ft.WindowDragArea(ft.Row([ft.Text('GDL', expand=True, font_family='Ubuntu', size=30),
                                                status_label := ft.Text('', size = 15),
                                                ft.PopupMenuButton(items=[
@@ -140,6 +150,7 @@ def main(page: ft.Page):
 
             self.button.icon = icons.DOWNLOADING_ROUNDED
             self.button.icon_color = 'blue'
+            self.button.disabled = True
             self.button.update()
 
             response = requests.get(url, stream=True)
@@ -160,6 +171,8 @@ def main(page: ft.Page):
             self.button.on_click = lambda _: self.deletemod(name=name)
             self.button.icon_color = 'red'
             self.button.tooltip = ''
+            self.button.disabled = False
+            open_snack_bar(f'{self.main_text.value} {translates.installed}')
             self.button.update()
 
         def deletemod(self, name):
@@ -171,6 +184,7 @@ def main(page: ft.Page):
             self.button.icon = icons.DOWNLOAD
             self.button.icon_color = 'green'
             self.button.on_click = lambda _: self.download_mod(name=name)
+            open_snack_bar(f'{self.main_text.value} {translates.deleted}')
             self.button.update()
 
         def __init__(self, name):
@@ -181,7 +195,6 @@ def main(page: ft.Page):
                                                                                                 "files"] not in os.listdir(
                 mod_install_path) else ft.IconButton(icon=icons.DELETE, icon_color='red',
                                                      on_click=lambda _: self.deletemod(name=name))
-
             if mod_install_path == GDpath:
                 self.button.disabled = True
                 self.button.icon_color = 'gray'
@@ -198,9 +211,8 @@ def main(page: ft.Page):
                                                                                                       "img"] == "" else ft.Container(
                 ft.Column([ft.Image(jsus["mods"][name]["img"], tooltip=translates.screenshot, border_radius=0),
                            ft.Row([self.main_text, self.button]), self.disc]), border_radius=5,
-                gradient=ft.LinearGradient(['blue', 'purple'], begin=ft.alignment.bottom_left,
+                gradient=ft.LinearGradient(['blue', '#6132ed'], begin=ft.alignment.bottom_left,
                                            end=ft.alignment.top_right))
-            mod_all.append(self.result)
             if jsus["mods"][name]["type"] == 'mod':
                 mod_mod.append(self.result)
             elif jsus["mods"][name]["type"] == 'bot':
@@ -263,7 +275,7 @@ def main(page: ft.Page):
             self.main_label = ft.Text(name, size=30, expand=True)
             self.button = ft.IconButton(icon=icons.DOWNLOAD, icon_color='green',
                                         on_click=lambda _: self.install_menu(name=name))
-            if bsus["mod-menus"][name]["files"][0] in os.listdir(GDpath):
+            if bsus["mod-menus"][name]["files"][1] in os.listdir(GDpath):
                 self.button.icon = icons.DELETE
                 self.button.on_click = lambda _: self.remove_menu(name=name)
                 self.button.icon_color = 'red'
@@ -271,17 +283,17 @@ def main(page: ft.Page):
             self.disc = ft.Text(bsus["mod-menus"][name]["disk-ru"])
             if tlang == 'EN':
                 self.disc.value = bsus["mod-menus"][name]["disk-en"]
-            self.screenshot = ft.Image(bsus["mod-menus"][name]["screenshot"], border_radius=10,
+            self.screenshot = ft.Image(bsus["mod-menus"][name]["screenshot"],
                                        tooltip=translates.screenshot)
             self.container = ft.Container(ft.Column([self.screenshot,
                                                      ft.Row([self.main_label, self.button]),
-                                                     self.disc]), border_radius=5, gradient=ft.LinearGradient(['blue', 'purple']))
+                                                     self.disc]), border_radius=5, gradient=ft.LinearGradient(['blue', '#6132ed']))
             mod_menus.append(self.container)
-            mod_all.append(self.container)
 
     class TP():
         def delete_tp(self, name):
             shutil.rmtree(packs_path + '\\' + name)
+            open_snack_bar(f'{self.main_text.value} {translates.deleted}')
             self.button.icon = icons.DOWNLOAD
             self.button.icon_color = 'green'
             self.button.on_click = lambda _: self.download_tp(name=name)
@@ -305,6 +317,7 @@ def main(page: ft.Page):
             with zipfile.ZipFile(packs_path + '\\' + name + '.zip') as zf:
                 zf.extractall(packs_path)
             os.remove(packs_path + '\\' + name + '.zip')
+            open_snack_bar(f'{self.main_text.value} {translates.installed}')
             self.button.icon = icons.DELETE
             self.button.icon_color = 'red'
             self.button.on_click = lambda _: self.delete_tp(name=name)
@@ -325,20 +338,18 @@ def main(page: ft.Page):
                 self.button.disabled = True
                 self.button.tooltip = translates.textureldrerror
             self.result = ft.Container(ft.Column([
-                ft.Row([self.main_text, self.button]),
-                self.screenshot
-            ]), gradient=ft.LinearGradient(['blue', 'purple']), border_radius=5)
+                self.screenshot,
+                ft.Row([self.main_text, self.button])
+            ]), gradient=ft.LinearGradient(['blue', '#6132ed']), border_radius=5)
             mod_tp.append(self.result)
-            mod_all.append(self.result)
 
-    tab_mods = ft.Tabs(tabs=[ft.Tab(translates.mods_all, content=ft.Column(mod_all := [])),
-                             ft.Tab(translates.menus, content=ft.Column(mod_menus := [])),
+    tab_mods = ft.Tabs(tabs=[ft.Tab(translates.menus, content=ft.Column(mod_menus := [])),
                              ft.Tab(translates.mods_mod, content=ft.Column(mod_mod := [])),
                              ft.Tab(translates.mods_bot, content=ft.Column(mod_bot := [])),
                              ft.Tab(translates.mods_clickbot, content=ft.Column(mod_clickbot := [])),
                              ft.Tab(translates.mods_bypass, content=ft.Column(mod_bypass := [])),
                              ft.Tab(translates.TP, content=ft.Column(mod_tp := []))],
-                             divider_color=bgcolor, indicator_color='blue', overlay_color=bgcolor,
+                             divider_color=bgcolor,
                              indicator_border_radius=50, indicator_padding=10, animation_duration=250)
 
     start_tab = 3 if CFG["path"] == "" else 0
@@ -352,6 +363,7 @@ def main(page: ft.Page):
         def save(e):
             write_in_cfg("theme", "light") if theme_select.value == '0' else write_in_cfg("theme", "dark")
             write_in_cfg("lang", "RU") if lang_select.value == '0' else write_in_cfg("lang", "EN")
+            write_in_cfg("color", main_color.value)
 
             dialog_restart_open()
 
@@ -376,10 +388,13 @@ def main(page: ft.Page):
     gd_direct_pick = ft.FilePicker(on_result=settings.gd_direct_pick_save)
     page.overlay.append(gd_direct_pick)
 
+    def change_main_color(e):
+        page.theme.color_scheme_seed = main_color.value
+        page.update()
     settings = [ft.Row([
         path_field := ft.TextField(label=translates.gdpath, hint_text=translates.pathway, expand=True, border_radius=10,
                                    border_width=0),
-        ft.IconButton(icon=icons.FOLDER_ROUNDED, icon_color='blue', bgcolor=bgcolor,
+        ft.IconButton(icon=icons.FOLDER_ROUNDED,
                       on_click=lambda _: gd_direct_pick.get_directory_path(translates.gdpath))
             ]),
         lang_select := ft.Dropdown(options=[ft.dropdown.Option(0, 'Русский'), ft.dropdown.Option(1, 'English')],
@@ -387,7 +402,9 @@ def main(page: ft.Page):
         theme_select := ft.Dropdown(
             options=[ft.dropdown.Option(0, translates.lighttheme), ft.dropdown.Option(1, translates.darktheme)],
             border_radius=10, label=translates.theme, value=CFG["theme"], border_width=0),
-        ft.ElevatedButton(translates.applytext, icon=icons.CHECK_ROUNDED, bgcolor='blue', color='black',
+        main_color := ft.TextField(label='Основной цвет', on_change=change_main_color,
+                                   border_radius=10, border_width=0, value=CFG["color"]),
+        ft.ElevatedButton(translates.applytext, icon=icons.CHECK_ROUNDED,
                           on_click=settings.save),
         ft.Text(translates.versiontext)
     ]
@@ -397,7 +414,7 @@ def main(page: ft.Page):
             global tlang
             self.name = ft.Text(title, size=20)
             self.disc = ft.Text(description + '\n\n' + data, size=15)
-            self.image = ft.Container(ft.Image(image_url, border_radius=0), on_click=lambda _: webbrowser.open(self.link))
+            self.image = ft.Container(ft.Image(image_url, border_radius=0), on_click=lambda _: webbrowser.open(ur))
             self.link = url
 
             def news_translate(e):
@@ -413,7 +430,7 @@ def main(page: ft.Page):
                 page.update()
             self.translate = ft.Checkbox(label='Перевести', on_change=news_translate) if tlang == 'RU' else ft.Text()
             self.container = ft.Container(ft.Column([self.image, self.name, self.disc, self.translate]), border_radius=10,
-                                          gradient=ft.LinearGradient(['blue', 'orange'], begin=ft.alignment.bottom_left,
+                                          gradient=ft.LinearGradient(['blue', 'yellow'], begin=ft.alignment.bottom_left,
                                                                      end=ft.alignment.top_right),
                                           shadow=ft.BoxShadow(1, 5, 'black'))
 
@@ -430,24 +447,24 @@ def main(page: ft.Page):
     class TopLevel():
         def __init__(self, top: str, name: str, author: str, youtube: str, image: str):
             self.result = ft.Container(ft.Row([
-                ft.Image(image, width=140, height=100, border_radius=10),
+                ft.Image(image, width=100, height=100, border_radius=10),
                 ft.Column([
                     ft.Row([ft.Text(top.strip() + ' - ' + name.strip(), size=30)]),
                     ft.Row([ft.Text(author.strip(), size=25)])
                 ])
-            ]), shadow=ft.BoxShadow(1, 3, 'black'), bgcolor=smoth_color, border_radius=5, on_click=lambda _: webbrowser.open(youtube))
+            ]), bgcolor=smoth_color, border_radius=5, on_click=lambda _: webbrowser.open(youtube))
 
         def ParserMain():
             site = requests.get('https://pointercrate.com/demonlist/').text
             soup = BeautifulSoup(site, 'lxml')
             for i in soup.find_all(class_="panel fade"):
-                lists_main.append(TopLevel(i.find('h2').text.split(' – ')[0].split('#')[1],
+                lists_pointer.append(TopLevel(i.find('h2').text.split(' – ')[0].split('#')[1],
                                            i.find('h2').text.split(' – ')[1],
                                            i.find('i').text,
                                            str(i.find('a')).split('class="play" href="')[1].split('"></a>')[0],
                                            str(i.find(class_="thumb ratio-16-9 js-delay-css")).split("url('")[1].split(
                                                "')")[0]).result)
-            lists_main.append(ft.Container(ft.Text('PointerCreate', size=30, color='blue'),
+            lists_pointer.append(ft.Container(ft.Text('PointerCreate', size=30, color='blue'),
                                            on_click=lambda _: webbrowser.open('https://pointercrate.com/demonlist/')))
         def ParserChallenges():
             site = requests.get('https://challengelist.gd/challenges/').text
@@ -461,11 +478,22 @@ def main(page: ft.Page):
                                                "')")[0]).result)
             lists_chal.append(ft.Container(ft.Text('The Challenge List', size=30, color='blue'),
                                            on_click=lambda _: webbrowser.open('https://challengelist.gd/challenges/')))
+        def ParserRK():
+            site = requests.get('https://demonlist.org/api/list_main/').json()
+            for i in site:
+                lists_global.append(TopLevel(str(i["place"]),
+                                           i["name"],
+                                           i["creator"],
+                                           i["video"],
+                                           'https://demonlist.org/data/previews/' + i["preview"]).result)
+            lists_global.append(ft.Container(ft.Text('DemonList', size=30, color='blue'),
+                                           on_click=lambda _: webbrowser.open('https://demonlist.org/')))
     tab_main = [ft.Row([ft.Text(translates.news, expand=True, size=40, text_align=ft.TextAlign.CENTER)])]
     tab_list = ft.Tabs(tabs=[
-            ft.Tab(content=ft.Column(lists_main := []), text=translates.list_main),
+            ft.Tab(content=ft.Column(lists_global := []), text=translates.list_global),
+            ft.Tab(content=ft.Column(lists_pointer := []), text=translates.list_pointer),
             ft.Tab(content=ft.Column(lists_chal := []), text=translates.list_challenges)
-        ], divider_color=bgcolor, indicator_color='blue', overlay_color=bgcolor, indicator_border_radius=50, indicator_padding=10, animation_duration=250)
+        ], divider_color=bgcolor, indicator_border_radius=50, indicator_padding=10, animation_duration=250)
     tabs_tabs = [
         ft.Tab(content=ft.Column(tab_main), text=translates.main, icon=icons.MENU_ROUNDED),
         ft.Tab(content=tab_mods, text=translates.mods, icon=icons.VIEW_MODULE_ROUNDED),
@@ -478,12 +506,11 @@ def main(page: ft.Page):
         tabs_tabs = [ft.Tab(content=ft.Column(settings), text=translates.main, icon=icons.SETTINGS)]
         start_tab = 0
 
-    tabs = ft.Tabs(tabs=tabs_tabs, divider_color=bgcolor, indicator_color='blue', overlay_color=bgcolor,
+    tabs = ft.Tabs(tabs=tabs_tabs, divider_color=bgcolor,
                    indicator_border_radius=50,
                    indicator_padding=10, animation_duration=250, selected_index=start_tab)
 
     page.add(tool_bar_title, tabs)
-
     jsus = requests.get('https://raw.githubusercontent.com/N1C1N1/GDL/main/ext.json').json()
     news.ParserNews()
     if GDpath != "":
@@ -499,11 +526,12 @@ def main(page: ft.Page):
         for i in bsus["tp"].keys():
             TP(i)
             page.update()
-    status_label_update(f'{translates.loading}: {translates.lists}')
-    TopLevel.ParserMain()
-    TopLevel.ParserChallenges()
-    status_label_update('')
-    page.update()
+        status_label_update(f'{translates.loading}: {translates.lists}')
+        TopLevel.ParserMain()
+        TopLevel.ParserChallenges()
+        TopLevel.ParserRK()
+        status_label_update('')
+        page.update()
 def new_programm_version(page: ft.Page):
     page.window_width, page.window_height = 300, 290
     page.title = 'Доступно обновление!' if tlang == 'RU' else 'Update available!'
