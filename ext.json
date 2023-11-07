@@ -33,12 +33,12 @@
             "img" : ""
         },
         "ZCB Live" : {
-            "link" : "https://cdn.discordapp.com/attachments/1163519148362580039/1163524611170902036/zcl.dll",
+            "link" : "https://cdn.discordapp.com/attachments/1163519148362580039/1170992327213449327/zcl.dll",
             "files" : "zcl.dll",
             "type" : "click bot",
             "discription-en" : "Live version of ZCB click bot.",
             "discription-ru" : "Live версия клик бота ZCB.",
-            "img" : "https://media.discordapp.net/attachments/1153296650769547315/1163865642634584074/image.png"
+            "img" : "https://cdn.discordapp.com/attachments/1163519148362580039/1170405300961034381/image.png"
         },
         "Volume Control" : {
             "link" : "https://cdn.discordapp.com/attachments/837026406282035300/869327712467185714/VolumeControl.dll",
