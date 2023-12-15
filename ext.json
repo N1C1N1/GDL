@@ -135,6 +135,14 @@
             "discription-en" : "Play your way through a series of levels that get aggressively harder",
             "discription-ru" : "Пройдите ряд уровней, которые становятся все сложнее и сложнее",
             "img" : ""
-        }
+        },
+        "eBot" : {
+            "link" : "https://cdn.discordapp.com/attachments/977410624520863754/978994397049929728/ebot.dll",
+            "files" : "ebot.dll",
+            "type" : "mod",
+            "discription-en" : "eBot is still in very early stages of development and it is not very accurate.",
+            "discription-ru" : "eBot все еще находится на ранних стадиях разработки и не очень точен.",
+            "img" : "https://cdn.discordapp.com/attachments/1185233378644070450/1185233378908323860/Geometry_Dash_Screenshot_2023.png"
+        },
     }
 }
