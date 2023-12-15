@@ -64,6 +64,14 @@
             "discription-ru" : "Добавляет различные функции для взаимодействия с загруженной музыкой",
             "img" : "https://user-images.githubusercontent.com/84187852/270809421-32deae33-fc5c-4f89-9628-0c6f7fd98259.png"
         },
+        "CoolMainMenu" : {
+            "link" : "https://cdn.discordapp.com/attachments/1185231736842502235/1185231737039638570/CoolMainMenu.dll",
+            "files" : "CoolMainMenu.dll",
+            "type" : "mod",
+            "discription-en" : "Improvements for the main menu.",
+            "discription-ru" : "Улучшения для главного меню.",
+            "img" : "https://cdn.discordapp.com/attachments/1185231736842502235/1185231893856268419/68747470733a2f2f63646e2e646973636f72646170702e636f6d2f6174746163686d656e74732f3838353435353037363338393435333833372f313033363638343431393830363738393633322f756e6b6e6f776e2e706e67.png"
+        },
         "Every Key Jump" : {
             "link" : "https://cdn.discordapp.com/attachments/1122321217030979685/1154044241232793630/every-key-jumps.dll",
             "files" : "every-key-jumps.dll",
