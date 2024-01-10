@@ -75,3 +75,9 @@ class ModFile:
                 os.remove(self.path + filename)
             else:
                 shutil.rmtree(self.path + filename)
+    
+def gdh_uninstall_fix(path: str):
+        download = requests.get('https://github.com/N1C1N1/GDL/raw/main/files/libExtensions.dll')
+
+        with open(path + '\\' + 'libExtensions.dll', 'wb') as file:
+            file.write(download.content)

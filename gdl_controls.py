@@ -46,7 +46,7 @@ class news():
             ft.Column([self.image, self.name, self.disc, self.translate], alignment=ft.alignment.center, horizontal_alignment=ft.CrossAxisAlignment.CENTER), 
             border_radius=10,
             blur=100,
-            height=400, width=600,
+            height=500, width=500,
             border=ft.border.all(4, '#0a0a0a'),
             bgcolor='#0f0f0f'
         )

@@ -2,23 +2,29 @@ import flet as ft
 from gdl_controls import *
 import webbrowser, bs4, requests, os
 import mods
-__version__ = 1.1
+__version__ = 2.1
 
 def get_github_version():
-    soup = bs4.BeautifulSoup(requests.get('https://github.com/N1C1N1/GDL2/releases/latest').text, 'lxml')
+    soup = bs4.BeautifulSoup(requests.get('https://github.com/N1C1N1/GDL/releases/latest').text, 'lxml')
     return [float(soup.find(class_="d-inline mr-3").text), soup.find(class_="markdown-body my-3").text.strip()]
 
 def main(page: ft.Page):
     page.title = 'GDL'
+    page.fonts = {
+        'rubik': 'https://github.com/google/fonts/raw/main/ofl/rubik/Rubik%5Bwght%5D.ttf'
+    }
     page.theme = ft.Theme(
         color_scheme=ft.ColorScheme(
             primary='white',
             secondary='white'
-        )
+        ),
+        font_family='rubik',
+        use_material3=True
     )
     page.window_height, page.window_width = 650, 600
     news_row = ft.Row(wrap=True, alignment=ft.MainAxisAlignment.CENTER, vertical_alignment=ft.CrossAxisAlignment.CENTER)
-
+    if page.client_storage.get('check_updates') == '':
+        page.client_storage.set('check_updates', True)
     class dev:
         def __init__(self, name, key):
             self.row = ft.Row([ft.Text(name, size=30, selectable=True), ft.Text('', expand=True), ft.Text(key, size=30, selectable=True)], alignment=ft.alignment.center)
@@ -26,17 +32,18 @@ def main(page: ft.Page):
     dev_info = ft.Column(
         [
             dev('Версия', __version__).row,
-            dev('Расположение игры', page.client_storage.get('gd_path')).row
+            dev('Расположение игры', page.client_storage.get('gd_path')).row,
+            dev('Обновления', page.client_storage.get('check_updates')).row
         ], expand=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.alignment.center, scroll=ft.ScrollMode.ADAPTIVE
     )
 
     class ModItem:
-        def __init__(self, github: mods.GithubModParser, files: list, name, description, screen):
+        def __init__(self, github: mods.GithubModParser, files: list, name, description, screen, type: mods.ModTypes = mods.ModTypes.MODMENU):
             self.github = github
             self.modfile = mods.ModFile(
                 path=str(page.client_storage.get('gd_path')),
                 files=files,
-                type=mods.ModTypes.MODMENU,
+                type=type,
                 github=self.github
             )
             self.modfile.path_to_install = str(page.client_storage.get('gd_path'))
@@ -48,28 +55,36 @@ def main(page: ft.Page):
                     mainButton.disabled = True
                     page.update()
                     page.client_storage.set(name + 'v', self.github.last_version)
-                    self.modfile.Install()
+                    try: 
+                        self.modfile.Install()
+                        page.snack_bar = ft.SnackBar(ft.Text(f'{name} успешно установлен', color='green'), duration=500, bgcolor='black')
+                        page.snack_bar.open = True
+                    except: page.go('/settings')
                     mainButton.disabled = False
-                    page.snack_bar = ft.SnackBar(ft.Text(f'{name} успешно установлен', color='green'), duration=500, bgcolor='black')
-                    page.snack_bar.open = True
+
                     page.update()
                     check()
 
                 def delete(e):
                     mainButton.disabled = True
                     page.update()
-                    self.modfile.Delete()
+                    try: 
+                        self.modfile.Delete()
+                        if name == 'GDH': mods.gdh_uninstall_fix(page.client_storage.get('gd_path'))
+                        page.snack_bar = ft.SnackBar(ft.Text(f'{name} успешно удалён', color='green'), duration=500, bgcolor='black')
+                        page.snack_bar.open = True
+                    except: page.go('/settings')
                     mainButton.disabled = False
-                    page.snack_bar = ft.SnackBar(ft.Text(f'{name} успешно удалён', color='green'), duration=500, bgcolor='black')
-                    page.snack_bar.open = True
                     check()
                 
                 def update(e):
                     mainButton.disabled = True
                     page.update()
-                    self.modfile.Delete()
-                    self.modfile.Install()
-                    page.client_storage.set(name + 'v', self.github.last_version)
+                    try:
+                        self.modfile.Delete()
+                        self.modfile.Install()
+                        page.client_storage.set(name + 'v', self.github.last_version)
+                    except: page.go('/settings')
                     mainButton.disabled = False
                     check()
 
@@ -93,9 +108,11 @@ def main(page: ft.Page):
                 page.views.append(ft.View(
                     '/mods/' + name,
                     controls=[
-                        ft.Row([ft.Text(name, size=30, expand=True), mainButton]),
+                        ft.Row([
+                            ft.Text(name, size=30, expand=True, tooltip=self.github.last_version),
+                            mainButton]),
                         ft.Text(description, size=20),
-                        ft.Image(screen, expand=True, border_radius=5),
+                        ft.Image(screen, border_radius=5, expand=True), 
                         ft.TextButton(icon=ft.icons.ARROW_BACK_IOS_NEW_ROUNDED, text = 'Вернуться', on_click=lambda _: page.go('/'))
                     ],
                     bgcolor='black',
@@ -204,6 +221,7 @@ def main(page: ft.Page):
                     [
                         gdPathField,
                         ft.Divider(),
+                        t_updates := ft.CupertinoSwitch(label='Проверять на обновления', on_change=lambda _: page.client_storage.set('check_updates', t_updates.value), value=page.client_storage.get('check_updates')),
                         ft.TextButton(icon=ft.icons.ARROW_BACK_IOS_NEW_ROUNDED, text = 'Вернуться', on_click=lambda _: page.go('/'))
                     ],
                     bgcolor='black',
@@ -235,14 +253,14 @@ def main(page: ft.Page):
         mods.GithubModParser('https://github.com/TobyAdd/GDH/releases', 'Release.zip'),
         ['GDH', 'gdh.dll', 'libExtensions.dll', 'libExtensions.dll.bak'],
         'GDH',
-        'Мод-меню с обширным функционалом, имееться бот',
+        'Мод-меню с обширным функционалом, имеется бот.',
         'https://cdn.discordapp.com/attachments/1186919727046610984/1191015890502819930/image.png'
     ).add()
     ModItem(
         mods.GithubModParser('https://github.com/maxnut/GDMegaOverlay/releases', 'gdmo.zip'),
         ['GDMO', 'GDMO.dll', 'minhook.x32.dll', 'xinput9_1_0.dll'],
         'GDMO',
-        'Имееться бот, множество функций, интерфейс похож на megahack.',
+        'Имеется бот, множество функций, интерфейс похож на megahack.',
         'https://github.com/maxnut/GDMegaOverlay/raw/2.2/img/screen.jpg'
     ).add()
     ModItem(
@@ -265,8 +283,9 @@ def main(page: ft.Page):
         page.update()
 
     #checking updates
-    get_github = get_github_version()
-    if __version__ != get_github[0]:
-        dialogUpdate.content.value = get_github[1]
-        change_banner(True)
+    if page.client_storage.get('check_updates') == True:
+        get_github = get_github_version()
+        if __version__ != get_github[0]:
+            dialogUpdate.content.value = get_github[1]
+            change_banner(True)
 ft.app(main)
