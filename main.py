@@ -2,12 +2,13 @@ import flet as ft
 from gdl_controls import *
 import webbrowser, bs4, requests, os
 import mods
-__version__ = 2.1
+__version__ = 2.15
 
 def get_github_version():
-    soup = bs4.BeautifulSoup(requests.get('https://github.com/N1C1N1/GDL/releases/latest').text, 'lxml')
-    return [float(soup.find(class_="d-inline mr-3").text), soup.find(class_="markdown-body my-3").text.strip()]
+    git = requests.get('https://api.github.com/repos/N1C1N1/GDL/releases/latest').json()
+    return [float(git["name"]), git["body"]]
 
+get_github = get_github_version()
 def main(page: ft.Page):
     page.title = 'GDL'
     page.fonts = {
@@ -68,41 +69,51 @@ def main(page: ft.Page):
                 def delete(e):
                     mainButton.disabled = True
                     page.update()
-                    try: 
+                    try:
+                        if list(page.client_storage.get('gd_path'))[len(list(page.client_storage.get('gd_path'))) - 1] != '\\':
+                            page.client_storage.set('gd_path', page.client_storage.get('gd_path') + '\\')
                         self.modfile.Delete()
                         if name == 'GDH': mods.gdh_uninstall_fix(page.client_storage.get('gd_path'))
                         page.snack_bar = ft.SnackBar(ft.Text(f'{name} успешно удалён', color='green'), duration=500, bgcolor='black')
                         page.snack_bar.open = True
-                    except: page.go('/settings')
+                    except Exception as e:
+                        page.snack_bar = ft.SnackBar(ft.Text(f'Неизвестная ошибка:\n{e}', color='red'), duration=2000, bgcolor='black')
+                        page.snack_bar.open = True
+                    
                     mainButton.disabled = False
                     check()
                 
                 def update(e):
                     mainButton.disabled = True
                     page.update()
-                    try:
-                        self.modfile.Delete()
-                        self.modfile.Install()
-                        page.client_storage.set(name + 'v', self.github.last_version)
-                    except: page.go('/settings')
+                    self.modfile.Delete()
+                    self.modfile.Install()
+                    page.client_storage.set(name + 'v', self.github.last_version)
                     mainButton.disabled = False
                     check()
 
                 mainButton = ft.TextButton('Скачать', on_click=get)
+                start_button = ft.TextButton('Запустить', on_click=lambda _: self.modfile.Run())
+                start_button.visible = False
                 def check():
                     if page.client_storage.get('gd_path') == '':
                         mainButton.on_click = lambda _: page.go('/settings')
                     else:
                         if self.modfile.files[0] in os.listdir(str(page.client_storage.get('gd_path'))):
+                            if self.github.last_version != str(page.client_storage.get(name + 'v')) and page.client_storage.get(name + 'v') != None:
+                                print(self.github.last_version, str(page.client_storage.get(name + 'v')))
+                                mainButton.text = 'Обновить'
+                                mainButton.on_click = update
+                            if self.modfile.type == mods.ModTypes.INSTALLER:
+                                start_button.visible = True
                             mainButton.text = 'Удалить'
                             mainButton.on_click = delete
-                        elif self.github.last_version != str(page.client_storage.get(name + 'v')) and page.client_storage.get(name + 'v') != None:
-                            mainButton.text = 'Обновить'
-                            mainButton.on_click = update
                         else:
+                            start_button.visible = False
                             mainButton.text = 'Скачать'
                             mainButton.on_click = get
                     page.update()
+                
                 check()
                 page.views.clear()
                 page.views.append(ft.View(
@@ -110,6 +121,7 @@ def main(page: ft.Page):
                     controls=[
                         ft.Row([
                             ft.Text(name, size=30, expand=True, tooltip=self.github.last_version),
+                            start_button,
                             mainButton]),
                         ft.Text(description, size=20),
                         ft.Image(screen, border_radius=5, expand=True), 
@@ -148,10 +160,10 @@ def main(page: ft.Page):
         title=ft.Text('Обновление!'),
         modal=True,
         actions=[
-            ft.TextButton('Скачать', on_click=lambda _: webbrowser.open('https://github.com/N1C1N1/GDL2/releases/latest')),
+            ft.TextButton('Скачать', on_click=lambda _: webbrowser.open('https://github.com/N1C1N1/GDL/releases/latest')),
             ft.TextButton('Закрыть', on_click=lambda _: change_banner(False))
         ],
-        content=ft.Text()
+        content=ft.Markdown()
     )
     gdPathField = ft.TextField(label='Путь к ГД', on_change=lambda _: page.client_storage.set('gd_path', str(gdPathField.value)), value=page.client_storage.get("gd_path"))
 
@@ -250,25 +262,33 @@ def main(page: ft.Page):
     page.go(page.route)
 
     ModItem(
-        mods.GithubModParser('https://github.com/TobyAdd/GDH/releases', 'Release.zip'),
+        mods.GithubModParser('https://api.github.com/repos/TobyAdd/GDH/releases/latest'),
         ['GDH', 'gdh.dll', 'libExtensions.dll', 'libExtensions.dll.bak'],
         'GDH',
         'Мод-меню с обширным функционалом, имеется бот.',
         'https://cdn.discordapp.com/attachments/1186919727046610984/1191015890502819930/image.png'
     ).add()
     ModItem(
-        mods.GithubModParser('https://github.com/maxnut/GDMegaOverlay/releases', 'gdmo.zip'),
+        mods.GithubModParser('https://api.github.com/repos/maxnut/GDMegaOverlay/releases/latest'),
         ['GDMO', 'GDMO.dll', 'minhook.x32.dll', 'xinput9_1_0.dll'],
         'GDMO',
         'Имеется бот, множество функций, интерфейс похож на megahack.',
         'https://github.com/maxnut/GDMegaOverlay/raw/2.2/img/screen.jpg'
     ).add()
     ModItem(
-        mods.GithubModParser('https://github.com/Prevter/GDOpenHack/releases', 'OpenHack_1.1.0.zip'),
-        ['openhack', 'winmm.dll'],
+        mods.GithubModParser('https://api.github.com/repos/prevter/gdopenhack/releases/latest'),
+        ['openhack', 'xinput9_1_0.dll'],
         'OpenHack',
         'Очень красивый интерфейс, но мало функций.',
         'https://github.com/Prevter/GDOpenHack/raw/main/docs/screenshot.png'
+    ).add()
+    ModItem(
+        mods.GithubModParser('https://api.github.com/repos/zeozeozeo/zcb3/releases/latest', 2),
+        ['zcb3.exe'],
+        'ZCB',
+        'Лучший клик бот.',
+        'https://github.com/zeozeozeo/zcb3/raw/master/screenshots/1.png',
+        mods.ModTypes.INSTALLER
     ).add()
 
     #getting news
@@ -284,7 +304,6 @@ def main(page: ft.Page):
 
     #checking updates
     if page.client_storage.get('check_updates') == True:
-        get_github = get_github_version()
         if __version__ != get_github[0]:
             dialogUpdate.content.value = get_github[1]
             change_banner(True)
