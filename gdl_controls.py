@@ -1,11 +1,11 @@
 import flet as ft
-import mods
 from translate import Translator
 
 class MenuItem():
     def __init__(self, name: str, icon: ft.icons, on_click = None):
         def on_hover(e):
             self.c.bgcolor = 'None' if self.c.bgcolor not in ['None', None] else 'white'
+            self.c.border = ft.border.all(8, 'white') if self.c.border == ft.border.all(4, 'white') else ft.border.all(4, 'white')
             self.c.update()
 
         self.c = ft.Container(

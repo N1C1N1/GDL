@@ -19,8 +19,7 @@ def main(page: ft.Page):
             primary='white',
             secondary='white'
         ),
-        font_family='rubik',
-        use_material3=True
+        font_family='rubik'
     )
     page.window_height, page.window_width = 650, 600
     news_row = ft.Row(wrap=True, alignment=ft.MainAxisAlignment.CENTER, vertical_alignment=ft.CrossAxisAlignment.CENTER)
@@ -39,23 +38,22 @@ def main(page: ft.Page):
     )
 
     class ModItem:
-        def __init__(self, github: mods.GithubModParser, files: list, name, description, screen, type: mods.ModTypes = mods.ModTypes.MODMENU):
-            self.github = github
-            self.modfile = mods.ModFile(
-                path=str(page.client_storage.get('gd_path')),
-                files=files,
-                type=type,
-                github=self.github
-            )
-            self.modfile.path_to_install = str(page.client_storage.get('gd_path'))
-            dev_info.controls.append(dev(name, page.client_storage.get(name + 'v')).row) # set info to dev
-            page.update()
-
+        def __init__(self, 
+                     github: mods.GithubModParser = None, 
+                     files: list = None, 
+                     name: str = None, 
+                     description: str = None, 
+                     screen: str = None, 
+                     type: mods.ModTypes = mods.ModTypes.MODMENU, 
+                     download_url = None, 
+                     download_file_name = None):
+            
             def mod_route(e):
+                self.container.border = ft.border.all(4, '#0a0a0a')
                 def get(e):
                     mainButton.disabled = True
                     page.update()
-                    page.client_storage.set(name + 'v', self.github.last_version)
+                    page.client_storage.set(name + 'v', self.modfile.last_version)
                     try: 
                         self.modfile.Install()
                         page.snack_bar = ft.SnackBar(ft.Text(f'{name} успешно установлен', color='green'), duration=500, bgcolor='black')
@@ -73,7 +71,7 @@ def main(page: ft.Page):
                         if list(page.client_storage.get('gd_path'))[len(list(page.client_storage.get('gd_path'))) - 1] != '\\':
                             page.client_storage.set('gd_path', page.client_storage.get('gd_path') + '\\')
                         self.modfile.Delete()
-                        if name == 'GDH': mods.gdh_uninstall_fix(page.client_storage.get('gd_path'))
+                        if name in ['GDH', 'gd hacks']: mods.gdh_uninstall_fix(page.client_storage.get('gd_path'))
                         page.snack_bar = ft.SnackBar(ft.Text(f'{name} успешно удалён', color='green'), duration=500, bgcolor='black')
                         page.snack_bar.open = True
                     except Exception as e:
@@ -88,7 +86,7 @@ def main(page: ft.Page):
                     page.update()
                     self.modfile.Delete()
                     self.modfile.Install()
-                    page.client_storage.set(name + 'v', self.github.last_version)
+                    page.client_storage.set(name + 'v', self.modfile.last_version)
                     mainButton.disabled = False
                     check()
 
@@ -100,8 +98,7 @@ def main(page: ft.Page):
                         mainButton.on_click = lambda _: page.go('/settings')
                     else:
                         if self.modfile.files[0] in os.listdir(str(page.client_storage.get('gd_path'))):
-                            if self.github.last_version != str(page.client_storage.get(name + 'v')) and page.client_storage.get(name + 'v') != None:
-                                print(self.github.last_version, str(page.client_storage.get(name + 'v')))
+                            if self.modfile.last_version != str(page.client_storage.get(name + 'v')) and page.client_storage.get(name + 'v') != None:
                                 mainButton.text = 'Обновить'
                                 mainButton.on_click = update
                             if self.modfile.type == mods.ModTypes.INSTALLER:
@@ -120,7 +117,7 @@ def main(page: ft.Page):
                     '/mods/' + name,
                     controls=[
                         ft.Row([
-                            ft.Text(name, size=30, expand=True, tooltip=self.github.last_version),
+                            ft.Text(name, size=30, expand=True, tooltip=self.modfile.last_version),
                             start_button,
                             mainButton]),
                         ft.Text(description, size=20),
@@ -138,14 +135,39 @@ def main(page: ft.Page):
                 ft.Text(name, size=30),
             ], alignment=ft.alignment.center, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
 
+            def container_hover(e):
+                self.container.border = ft.border.all(6, 'white') if self.container.border == ft.border.all(4, '#0a0a0a') else ft.border.all(4, '#0a0a0a')
+                page.update()
+
             self.container = ft.Container(
                 column,
                 height=300,
                 on_click=mod_route,
                 border=ft.border.all(4, '#0a0a0a'),
                 bgcolor='#0f0f0f',
-                blur=40
+                blur=40,
+                animate=ft.animation.Animation(100, ft.AnimationCurve.EASE_IN_CUBIC),
+                on_hover=container_hover,
+                width=350,
+                border_radius=5,
+                padding=10
             )
+
+            try:
+                self.github = github
+                self.modfile = mods.ModFile(
+                    path=str(page.client_storage.get('gd_path')),
+                    files=files,
+                    type=type,
+                    github=self.github,
+                    download_url=download_url,
+                    download_file_name=download_file_name
+                )
+            except:
+                return None
+            self.modfile.path_to_install = str(page.client_storage.get('gd_path'))
+            dev_info.controls.append(dev(name, page.client_storage.get(name + 'v')).row) # set info to dev
+            page.update()
         def add(self):
             mods_row.controls.append(self.container)
             page.update()
@@ -283,12 +305,29 @@ def main(page: ft.Page):
         'https://github.com/Prevter/GDOpenHack/raw/main/docs/screenshot.png'
     ).add()
     ModItem(
+        mods.GithubModParser('https://api.github.com/repos/qwix456/gd-hacks/releases/latest'),
+        ['gd-hacks.dll', 'libExtensions.dll'],
+        'GD Hacks',
+        'Микро мод меню, есть лайаут мод.',
+        'https://cdn.discordapp.com/attachments/1190628273210794024/1196770601432518747/296799623-06e91fad-2663-4e42-9b08-f696a329455d.png',
+        mods.ModTypes.GD_HACKS
+    ).add()
+    ModItem(
         mods.GithubModParser('https://api.github.com/repos/zeozeozeo/zcb3/releases/latest', 2),
         ['zcb3.exe'],
         'ZCB',
         'Лучший клик бот.',
         'https://github.com/zeozeozeo/zcb3/raw/master/screenshots/1.png',
         mods.ModTypes.INSTALLER
+    ).add()
+    ModItem(
+        files=['yBot Installer.exe'],
+        name='Ybot (free)',
+        description='Есть бесплатная версия но без возможности записи макросов.',
+        screen='https://cdn.discordapp.com/attachments/1136895151776747620/1189178561442095194/image.png',
+        type=mods.ModTypes.INSTALLER,
+        download_url='https://ybot.store/files/yBot%20Installer.exe',
+        download_file_name='yBot Installer.exe'
     ).add()
 
     #getting news
