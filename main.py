@@ -1,8 +1,22 @@
 import flet as ft
 from gdl_controls import *
-import webbrowser, bs4, requests, os
-import mods
-__version__ = 2.15
+import webbrowser, bs4, requests, os, mods
+from pypresence import Presence
+from time import time
+
+__version__ = 2.2
+
+RPC = Presence("1150074235100856430")
+
+RPC.connect()
+
+def discord_update(text: str, custom_button: dict = None):
+    RPC.update(
+        state=text,
+        start=time(),
+        large_image='https://i.imgur.com/GzsXAal.png',
+        buttons=custom_button
+    )
 
 def get_github_version():
     git = requests.get('https://api.github.com/repos/N1C1N1/GDL/releases/latest').json()
@@ -10,6 +24,7 @@ def get_github_version():
 
 get_github = get_github_version()
 def main(page: ft.Page):
+    global ModItem
     page.title = 'GDL'
     page.fonts = {
         'rubik': 'https://github.com/google/fonts/raw/main/ofl/rubik/Rubik%5Bwght%5D.ttf'
@@ -22,7 +37,9 @@ def main(page: ft.Page):
         font_family='rubik'
     )
     page.window_height, page.window_width = 650, 600
+    page.theme_mode = ft.ThemeMode.DARK
     news_row = ft.Row(wrap=True, alignment=ft.MainAxisAlignment.CENTER, vertical_alignment=ft.CrossAxisAlignment.CENTER)
+
     if page.client_storage.get('check_updates') == '':
         page.client_storage.set('check_updates', True)
     class dev:
@@ -43,12 +60,13 @@ def main(page: ft.Page):
                      files: list = None, 
                      name: str = None, 
                      description: str = None, 
-                     screen: str = None, 
+                     screens: list = None, 
                      type: mods.ModTypes = mods.ModTypes.MODMENU, 
                      download_url = None, 
                      download_file_name = None):
-            
+            self.name = name
             def mod_route(e):
+                discord_update(f'На странице {name}', [{'label': f'Скачать {name} через GDL', 'url': 'https://github.com/N1C1N1/GDL/releases/latest'}])
                 self.container.border = ft.border.all(4, '#0a0a0a')
                 def get(e):
                     mainButton.disabled = True
@@ -91,8 +109,8 @@ def main(page: ft.Page):
                     check()
 
                 mainButton = ft.TextButton('Скачать', on_click=get)
-                start_button = ft.TextButton('Запустить', on_click=lambda _: self.modfile.Run())
-                start_button.visible = False
+                start_button = ft.TextButton('Запустить', icon=ft.icons.PLAY_ARROW_ROUNDED)
+
                 def check():
                     if page.client_storage.get('gd_path') == '':
                         mainButton.on_click = lambda _: page.go('/settings')
@@ -101,27 +119,61 @@ def main(page: ft.Page):
                             if self.modfile.last_version != str(page.client_storage.get(name + 'v')) and page.client_storage.get(name + 'v') != None:
                                 mainButton.text = 'Обновить'
                                 mainButton.on_click = update
+                                mainButton.icon = ft.icons.UPDATE_ROUNDED
+                                start_button.visible = False
                             if self.modfile.type == mods.ModTypes.INSTALLER:
-                                start_button.visible = True
+                                start_button.on_click=lambda _: self.modfile.Run()
+                            else:
+                                start_button.on_click=lambda _: webbrowser.open('steam://rungameid/322170')
+                            
+                            start_button.visible = True
                             mainButton.text = 'Удалить'
                             mainButton.on_click = delete
+                            mainButton.icon = ft.icons.DELETE_ROUNDED
                         else:
                             start_button.visible = False
                             mainButton.text = 'Скачать'
                             mainButton.on_click = get
+                            mainButton.icon = ft.icons.DOWNLOAD_ROUNDED
                     page.update()
                 
                 check()
                 page.views.clear()
+
+                if self.github != None:
+                    githubInfo = ft.PopupMenuButton(
+                        items=[
+                            ft.PopupMenuItem(content=ft.Text('Github'), on_click=lambda _: webbrowser.open(self.github.html_url))
+                        ], tooltip='Открыть меню'
+                    )
+                    newButton = ft.TextButton('Что нового?', on_click=lambda _: opendlg(True))
+
+                    newDialog = ft.AlertDialog(
+                        content=ft.Column([ft.Markdown(self.github.body)], scroll=ft.ScrollMode.ADAPTIVE)
+                    )
+                else:
+                    githubInfo = ft.canvas.Canvas()
+                    newButton = ft.canvas.Canvas()
+
+                def opendlg(e):
+                    newDialog.open = e
+                    page.dialog = newDialog
+                    page.update()
+
                 page.views.append(ft.View(
                     '/mods/' + name,
                     controls=[
                         ft.Row([
                             ft.Text(name, size=30, expand=True, tooltip=self.modfile.last_version),
                             start_button,
-                            mainButton]),
+                            mainButton,
+                            githubInfo
+                            ]),
                         ft.Text(description, size=20),
-                        ft.Image(screen, border_radius=5, expand=True), 
+                        newButton,             
+                        ft.Row([
+                            ft.Image(i, border_radius=20, width=600, height=600) for i in screens
+                            ], scroll=ft.ScrollMode.ADAPTIVE, expand=True), 
                         ft.TextButton(icon=ft.icons.ARROW_BACK_IOS_NEW_ROUNDED, text = 'Вернуться', on_click=lambda _: page.go('/'))
                     ],
                     bgcolor='black',
@@ -131,7 +183,7 @@ def main(page: ft.Page):
                 page.update()
 
             column = ft.Column([
-                ft.Image(screen, expand=True, border_radius=5),
+                ft.Image(screens[0], expand=True, border_radius=5),
                 ft.Text(name, size=30),
             ], alignment=ft.alignment.center, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
 
@@ -168,6 +220,7 @@ def main(page: ft.Page):
             self.modfile.path_to_install = str(page.client_storage.get('gd_path'))
             dev_info.controls.append(dev(name, page.client_storage.get(name + 'v')).row) # set info to dev
             page.update()
+
         def add(self):
             mods_row.controls.append(self.container)
             page.update()
@@ -187,9 +240,33 @@ def main(page: ft.Page):
         ],
         content=ft.Markdown()
     )
-    gdPathField = ft.TextField(label='Путь к ГД', on_change=lambda _: page.client_storage.set('gd_path', str(gdPathField.value)), value=page.client_storage.get("gd_path"))
+    gdPathField = ft.TextField(label='Путь к ГД', on_change=lambda _: page.client_storage.set('gd_path', str(gdPathField.value)), value=page.client_storage.get("gd_path"), expand=True, border_width=2)
+
+    def gdPathOpenResult(e: ft.FilePickerResultEvent):
+        gdPathField.value = e.path
+        page.client_storage.set('gd_path', str(e.path))
+        page.update()
+
+    gdPathOpen = ft.FilePicker(on_result=gdPathOpenResult)
+
+    page.overlay.append(gdPathOpen)
 
     page.dialog = dialogUpdate
+
+    def searchmod(e):
+        mods_row.controls.clear()
+        if searchField.value.strip() == '':
+            for i in ModsList:
+                mods_row.controls.append(i.container)
+                page.update()
+        else:
+            for i in ModsList:
+                if i.name.lower().find(searchField.value) == 0:
+                    mods_row.controls.append(i.container)
+                    page.update()
+    
+    searchField = ft.TextField(label='Поиск', value = '', on_change=searchmod, border_width=3, border_radius=15, width=200, height=50)
+
     def route(e):
         page.views.clear()
         page.views.append(
@@ -205,6 +282,7 @@ def main(page: ft.Page):
                  bgcolor='black'
             )
         )
+        discord_update('Главное меню')
         if page.route == '/info':
             page.views.append(
                 ft.View(
@@ -235,6 +313,7 @@ def main(page: ft.Page):
                 )
             )
         if page.route == '/news':
+            discord_update('Смотрит новости')
             page.views.append(
                 ft.View(
                     '/news',
@@ -253,7 +332,7 @@ def main(page: ft.Page):
                 ft.View(
                     '/settings',
                     [
-                        gdPathField,
+                        ft.Row([gdPathField, ft.IconButton(icon=ft.icons.FOLDER_OPEN_ROUNDED, on_click=lambda _: gdPathOpen.get_directory_path('Выберите расположение ГД'))]),
                         ft.Divider(),
                         t_updates := ft.CupertinoSwitch(label='Проверять на обновления', on_change=lambda _: page.client_storage.set('check_updates', t_updates.value), value=page.client_storage.get('check_updates')),
                         ft.TextButton(icon=ft.icons.ARROW_BACK_IOS_NEW_ROUNDED, text = 'Вернуться', on_click=lambda _: page.go('/'))
@@ -265,11 +344,13 @@ def main(page: ft.Page):
                 )
             )
         if page.route == '/mods':
+            discord_update('Разглядывает моды')
             page.views.append(
                 ft.View(
                     '/mods',
                     [
                         ft.TextButton(icon=ft.icons.ARROW_BACK_IOS_NEW_ROUNDED, text = 'Вернуться', on_click=lambda _: page.go('/')),
+                        searchField,
                         mods_row
                     ],
                     bgcolor='black',
@@ -283,53 +364,63 @@ def main(page: ft.Page):
     page.on_route_change = route
     page.go(page.route)
 
-    ModItem(
-        mods.GithubModParser('https://api.github.com/repos/TobyAdd/GDH/releases/latest'),
-        ['GDH', 'gdh.dll', 'libExtensions.dll', 'libExtensions.dll.bak'],
-        'GDH',
-        'Мод-меню с обширным функционалом, имеется бот.',
-        'https://cdn.discordapp.com/attachments/1186919727046610984/1191015890502819930/image.png'
-    ).add()
-    ModItem(
-        mods.GithubModParser('https://api.github.com/repos/maxnut/GDMegaOverlay/releases/latest'),
-        ['GDMO', 'GDMO.dll', 'minhook.x32.dll', 'xinput9_1_0.dll'],
-        'GDMO',
-        'Имеется бот, множество функций, интерфейс похож на megahack.',
-        'https://github.com/maxnut/GDMegaOverlay/raw/2.2/img/screen.jpg'
-    ).add()
-    ModItem(
-        mods.GithubModParser('https://api.github.com/repos/prevter/gdopenhack/releases/latest'),
-        ['openhack', 'xinput9_1_0.dll'],
-        'OpenHack',
-        'Очень красивый интерфейс, но мало функций.',
-        'https://github.com/Prevter/GDOpenHack/raw/main/docs/screenshot.png'
-    ).add()
-    ModItem(
-        mods.GithubModParser('https://api.github.com/repos/qwix456/gd-hacks/releases/latest'),
-        ['gd-hacks.dll', 'libExtensions.dll'],
-        'GD Hacks',
-        'Микро мод меню, есть лайаут мод.',
-        'https://cdn.discordapp.com/attachments/1190628273210794024/1196770601432518747/296799623-06e91fad-2663-4e42-9b08-f696a329455d.png',
-        mods.ModTypes.GD_HACKS
-    ).add()
-    ModItem(
-        mods.GithubModParser('https://api.github.com/repos/zeozeozeo/zcb3/releases/latest', 2),
-        ['zcb3.exe'],
-        'ZCB',
-        'Лучший клик бот.',
-        'https://github.com/zeozeozeo/zcb3/raw/master/screenshots/1.png',
-        mods.ModTypes.INSTALLER
-    ).add()
-    ModItem(
-        files=['yBot Installer.exe'],
-        name='Ybot (free)',
-        description='Есть бесплатная версия но без возможности записи макросов.',
-        screen='https://cdn.discordapp.com/attachments/1136895151776747620/1189178561442095194/image.png',
-        type=mods.ModTypes.INSTALLER,
-        download_url='https://ybot.store/files/yBot%20Installer.exe',
-        download_file_name='yBot Installer.exe'
-    ).add()
-
+    ModsList = [
+        ModItem(
+            mods.GithubModParser('https://api.github.com/repos/TobyAdd/GDH/releases/latest'),
+            ['GDH', 'gdh.dll', 'libExtensions.dll', 'libExtensions.dll.bak'],
+            'GDH',
+            'Мод-меню с обширным функционалом, имеется бот.',
+            ['https://cdn.discordapp.com/attachments/1186919727046610984/1191015890502819930/image.png']
+        ),
+        ModItem(
+            mods.GithubModParser('https://api.github.com/repos/maxnut/GDMegaOverlay/releases/latest'),
+            ['GDMO', 'GDMO.dll', 'minhook.x32.dll', 'xinput9_1_0.dll'],
+            'GDMO',
+            'Имеется бот, множество функций, интерфейс похож на megahack.',
+            ['https://github.com/maxnut/GDMegaOverlay/raw/2.2/img/screen.jpg']
+        ),
+        ModItem(
+            mods.GithubModParser('https://api.github.com/repos/prevter/gdopenhack/releases/latest'),
+            ['openhack', 'xinput9_1_0.dll'],
+            'OpenHack',
+            'Очень красивый интерфейс, но мало функций.',
+            ['https://github.com/Prevter/GDOpenHack/raw/main/docs/screenshot.png']
+        ),
+        ModItem(
+            mods.GithubModParser('https://api.github.com/repos/qwix456/gd-hacks/releases/latest'),
+            ['gd-hacks.dll', 'libExtensions.dll'],
+            'GD Hacks',
+            'Микро мод меню, есть лайаут мод.',
+            ['https://cdn.discordapp.com/attachments/1190628273210794024/1196770601432518747/296799623-06e91fad-2663-4e42-9b08-f696a329455d.png'],
+            mods.ModTypes.GD_HACKS
+        ),
+        ModItem(
+            mods.GithubModParser('https://api.github.com/repos/zeozeozeo/zcb3/releases/latest', 2),
+            ['zcb3.exe'],
+            'ZCB',
+            'Лучший клик бот.',
+            ['https://github.com/zeozeozeo/zcb3/raw/master/screenshots/1.png'],
+            mods.ModTypes.INSTALLER
+        ),
+        ModItem(
+            github = mods.GithubModParser('https://api.github.com/repos/geode-sdk/geode/releases/latest', 3),
+            files = ["GeodeUpdater.exe", "XInput9_1_0.dll", "Geode.dll", "Geode.lib", "Geode.pdb"],
+            name = 'Geode',
+            description = 'Загрузчик модов Geometry Dash.',
+            screens=['https://geode-sdk.org/install.png', 'https://geode-sdk.org/manage.png'],
+            type=mods.ModTypes.MODMENU
+        ),
+        ModItem(
+            files=['yBot Installer.exe'],
+            name='Ybot (free)',
+            description='Есть бесплатная версия но без возможности записи макросов.',
+            screens=['https://cdn.discordapp.com/attachments/1136895151776747620/1189178561442095194/image.png'],
+            type=mods.ModTypes.INSTALLER,
+            download_url='https://ybot.store/files/yBot%20Installer.exe',
+            download_file_name='yBot Installer.exe'
+        )
+    ]
+    searchmod('N1C1 дауниха')
     #getting news
     for row_news in bs4.BeautifulSoup(requests.get('https://www.dashword.net/').text, 'lxml').find_all(class_="post cols"):
         news_row.controls.append(news(

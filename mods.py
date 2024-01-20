@@ -22,6 +22,8 @@ class GithubModParser:
         self.download_link = github_latest["assets"][file_len]["browser_download_url"]
         self.file_name = github_latest["assets"][file_len]["name"]
         self.all_files = github_latest["assets"]
+        self.body = github_latest["body"]
+        self.html_url = github_latest["html_url"] 
 
 class ModFile:
     def __init__(self, path: str = '', files: list = [], type: ModTypes = ModTypes.MODMENU, github: GithubModParser = None, download_url: str = None, download_file_name: str = None):
@@ -86,3 +88,12 @@ def gdh_uninstall_fix(path: str):
 
         with open(path + '\\' + 'libExtensions.dll', 'wb') as file:
             file.write(download.content)
+
+    # ModItem(
+    #     github = mods.GithubModParser('https://api.github.com/repos/geode-sdk/geode/releases/latest', 3),
+    #     files = ["GeodeUpdater.exe", "XInput9_1_0.dll", "Geode.dll", "Geode.lib", "Geode.pdb"],
+    #     name = 'Geode',
+    #     description = 'Загрузчик модов Geometry Dash.',
+    #     screen='https://geode-sdk.org/install.png',
+    #     type=mods.ModTypes.MODMENU
+    # ).add()
