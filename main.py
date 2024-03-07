@@ -1,45 +1,76 @@
 import flet as ft
 from gdl_controls import *
-import webbrowser, bs4, requests, os, mods
+import webbrowser, bs4, requests, os, mods, sys
 from pypresence import Presence
 from time import time
+import iapps.conf as conf
+from tokens import *
 
-__version__ = 2.2
+__version__ = 2.31
 
-RPC = Presence("nooononoo")
-
-RPC.connect()
-
-def discord_update(text: str, custom_button: dict = None):
-    RPC.update(
-        state=text,
-        start=time(),
-        large_image='https://i.imgur.com/GzsXAal.png',
-        buttons=custom_button
-    )
-
+# Парсер последней версии гдл
 def get_github_version():
-    git = requests.get('https://api.github.com/repos/N1C1N1/GDL/releases/latest').json()
-    return [float(git["name"]), git["body"]]
+    global githubStatus
+    try:
+        git = requests.get('https://api.github.com/repos/N1C1N1/GDL/releases/latest', headers=git_headers).json()
+        githubStatus = True
+        return [float(git["name"]), git["body"]]
+    except:
+        githubStatus = False
+# Проверка на наличее перетащеных файлов
+if len(sys.argv) <= 1:
+    get_github = get_github_version()
 
-get_github = get_github_version()
+colors = {
+    "app_item_bgcolor": "black",
+    "app_item_color": "#000000",
+    "border_deafult": "#0a0a0a",
+    "container_bgcolor": "#0f0f0f",
+    "primary": "#ffffff",
+    "secondary": "#ffffff",
+    "view_bgcolor": "#000000"
+}
+
 def main(page: ft.Page):
-    global ModItem
+    global githubStatus
+    
+    # Создаём РПС
+    RPC = Presence(RPC_TOKEN)
+
+    if page.client_storage.get('RPC') == None:
+        page.client_storage.set('RPC', True)
+    if page.client_storage.get('RPC'):
+        RPC.connect()
+
+    def discord_update(text: str, custom_button: dict = None):
+        if page.client_storage.get('RPC'):
+            try:
+                RPC.update(
+                    state=text,
+                    start=time(),
+                    large_image='https://i.imgur.com/GzsXAal.png',
+                    buttons=custom_button
+                )
+            except: ...
     page.title = 'GDL'
+    # Стилёк
     page.fonts = {
         'rubik': 'https://github.com/google/fonts/raw/main/ofl/rubik/Rubik%5Bwght%5D.ttf'
     }
     page.theme = ft.Theme(
         color_scheme=ft.ColorScheme(
-            primary='white',
-            secondary='white'
+            primary=colors['primary'],
+            secondary=colors['secondary']
         ),
-        font_family='rubik'
+        font_family='rubik',
+        page_transitions=ft.PageTransitionsTheme(
+            windows=ft.PageTransitionTheme.CUPERTINO
+        )
     )
-    page.window_height, page.window_width = 650, 600
+    page.window_height, page.window_width = 650, 850
     page.theme_mode = ft.ThemeMode.DARK
     news_row = ft.Row(wrap=True, alignment=ft.MainAxisAlignment.CENTER, vertical_alignment=ft.CrossAxisAlignment.CENTER)
-
+    
     if page.client_storage.get('check_updates') == '':
         page.client_storage.set('check_updates', True)
     class dev:
@@ -50,7 +81,9 @@ def main(page: ft.Page):
         [
             dev('Версия', __version__).row,
             dev('Расположение игры', page.client_storage.get('gd_path')).row,
-            dev('Обновления', page.client_storage.get('check_updates')).row
+            dev('Обновления', page.client_storage.get('check_updates')).row,
+            dev('Discord RPC', page.client_storage.get('Discord RPC')).row,
+            dev('githubstatus', githubStatus).row
         ], expand=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER, alignment=ft.alignment.center, scroll=ft.ScrollMode.ADAPTIVE
     )
 
@@ -67,7 +100,7 @@ def main(page: ft.Page):
             self.name = name
             def mod_route(e):
                 discord_update(f'На странице {name}', [{'label': f'Скачать {name} через GDL', 'url': 'https://github.com/N1C1N1/GDL/releases/latest'}])
-                self.container.border = ft.border.all(4, '#0a0a0a')
+                self.container.border = ft.border.all(4, colors['border_deafult'])
                 def get(e):
                     mainButton.disabled = True
                     page.update()
@@ -89,7 +122,7 @@ def main(page: ft.Page):
                         if list(page.client_storage.get('gd_path'))[len(list(page.client_storage.get('gd_path'))) - 1] != '\\':
                             page.client_storage.set('gd_path', page.client_storage.get('gd_path') + '\\')
                         self.modfile.Delete()
-                        if name in ['GDH', 'gd hacks']: mods.gdh_uninstall_fix(page.client_storage.get('gd_path'))
+                        if name in ['GDH', 'GD Hacks']: mods.gdh_uninstall_fix(page.client_storage.get('gd_path'))
                         page.snack_bar = ft.SnackBar(ft.Text(f'{name} успешно удалён', color='green'), duration=500, bgcolor='black')
                         page.snack_bar.open = True
                     except Exception as e:
@@ -188,21 +221,21 @@ def main(page: ft.Page):
             ], alignment=ft.alignment.center, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
 
             def container_hover(e):
-                self.container.border = ft.border.all(6, 'white') if self.container.border == ft.border.all(4, '#0a0a0a') else ft.border.all(4, '#0a0a0a')
+                self.container.border = ft.border.all(6, 'white') if self.container.border == ft.border.all(4, colors['border_deafult']) else ft.border.all(4, colors['border_deafult'])
                 page.update()
 
             self.container = ft.Container(
                 column,
                 height=300,
-                on_click=mod_route,
-                border=ft.border.all(4, '#0a0a0a'),
-                bgcolor='#0f0f0f',
-                blur=40,
-                animate=ft.animation.Animation(100, ft.AnimationCurve.EASE_IN_CUBIC),
+                border=ft.border.all(4, colors['border_deafult']),
+                bgcolor=colors['container_bgcolor'],
+                animate=ft.animation.Animation(100, ft.AnimationCurve.LINEAR),
                 on_hover=container_hover,
                 width=350,
                 border_radius=5,
-                padding=10
+                padding=10,
+                on_click=mod_route,
+                blur=25
             )
 
             try:
@@ -225,12 +258,29 @@ def main(page: ft.Page):
             mods_row.controls.append(self.container)
             page.update()
 
-    mods_row = ft.Row(wrap=True, alignment=ft.MainAxisAlignment.CENTER, vertical_alignment=ft.CrossAxisAlignment.CENTER)
+    class Iapps(ft.View):
+        def __init__(self, app):
+            super().__init__()
+            
+            self.app = app
+            self.route = f'/apps/{app.NAME}'
+            self.controls = [
+                ft.TextButton(icon=ft.icons.ARROW_BACK_IOS_NEW_ROUNDED, text = 'Вернуться', on_click=lambda _: page.go('/')),
+                ft.Column(app.CONTENT)
+            ]
+            self.bgcolor = app.BGCOLOR
+            self.scroll = ft.ScrollMode.ADAPTIVE
+    
+    mods_row = ft.Row(
+        wrap=True, 
+        alignment=ft.MainAxisAlignment.CENTER, 
+        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+        animate_size=ft.animation.Animation(300, ft.AnimationCurve.FAST_LINEAR_TO_SLOW_EASE_IN)
+    )
 
     def change_banner(type: bool):
         dialogUpdate.open = type
         page.update()
-
     dialogUpdate = ft.AlertDialog(
         title=ft.Text('Обновление!'),
         modal=True,
@@ -240,15 +290,14 @@ def main(page: ft.Page):
         ],
         content=ft.Markdown()
     )
+    
     gdPathField = ft.TextField(label='Путь к ГД', on_change=lambda _: page.client_storage.set('gd_path', str(gdPathField.value)), value=page.client_storage.get("gd_path"), expand=True, border_width=2)
 
     def gdPathOpenResult(e: ft.FilePickerResultEvent):
         gdPathField.value = e.path
         page.client_storage.set('gd_path', str(e.path))
         page.update()
-
     gdPathOpen = ft.FilePicker(on_result=gdPathOpenResult)
-
     page.overlay.append(gdPathOpen)
 
     page.dialog = dialogUpdate
@@ -266,20 +315,26 @@ def main(page: ft.Page):
                     page.update()
     
     searchField = ft.TextField(label='Поиск', value = '', on_change=searchmod, border_width=3, border_radius=15, width=200, height=50)
-
+    all_apps = [AppItem(i, page) for i in conf.APPS]
+    all_apps.insert(0, ft.TextButton(icon=ft.icons.ARROW_BACK_IOS_NEW_ROUNDED, text = 'Вернуться', on_click=lambda _: page.go('/')))
+    apps = [Iapps(i) for i in conf.APPS]
+    
     def route(e):
         page.views.clear()
         page.views.append(
             ft.View(
                 '/',
                 [
-                    ft.Container(ft.Row([MenuItem('Новости', ft.icons.NEWSPAPER_ROUNDED, on_click=lambda _: page.go('/news')).c,
-                    MenuItem('Моды', ft.icons.MODE_EDIT_ROUNDED, on_click=lambda _: page.go('/mods')).c,
-                    MenuItem('Настройки', ft.icons.SETTINGS, on_click=lambda _: page.go('/settings')).c,
-                    MenuItem('инфо', ft.icons.INFO_ROUNDED, on_click=lambda _: page.go('/info')).c], wrap=True),
+                    ft.Container(ft.Row([
+                            MenuItem('Новости', ft.icons.NEWSPAPER_ROUNDED, on_click=lambda _: page.go('/news')),
+                            MenuItem('Моды', ft.icons.MODE_EDIT_ROUNDED, on_click=lambda _: page.go('/mods')),
+                            MenuItem('Ультилиты', ft.icons.APPS_ROUNDED, on_click=lambda _: page.go('/apps')),
+                            MenuItem('Настройки', ft.icons.SETTINGS, on_click=lambda _: page.go('/settings')),
+                            MenuItem('инфо', ft.icons.INFO_ROUNDED, on_click=lambda _: page.go('/info'))
+                        ], wrap=True, animate_size=ft.animation.Animation(300, ft.AnimationCurve.FAST_LINEAR_TO_SLOW_EASE_IN)),
                     alignment=ft.alignment.center, expand = True, gradient=ft.LinearGradient(['red', 'yellow']), border_radius=4)
                  ],
-                 bgcolor='black'
+                 bgcolor=colors['view_bgcolor']
             )
         )
         discord_update('Главное меню')
@@ -293,7 +348,7 @@ def main(page: ft.Page):
                         ft.Container(ft.Text('By N1C1', color='blue'), on_click=lambda _: webbrowser.open('https://github.com/N1C1N1')),
                         ft.TextButton(icon=ft.icons.ARROW_BACK_IOS_NEW_ROUNDED, text = 'Вернуться', on_click=lambda _: page.go('/'))
                     ],
-                    bgcolor='black',
+                    bgcolor=colors['view_bgcolor'],
                     vertical_alignment=ft.MainAxisAlignment.CENTER,
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER
                 )
@@ -307,7 +362,7 @@ def main(page: ft.Page):
                         dev_info,
                         ft.TextButton(icon=ft.icons.ARROW_BACK_IOS_NEW_ROUNDED, text = 'Вернуться', on_click=lambda _: page.go('/info'))
                     ],
-                    bgcolor='black',
+                    bgcolor=colors['view_bgcolor'],
                     vertical_alignment=ft.MainAxisAlignment.CENTER,
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER
                 )
@@ -321,7 +376,7 @@ def main(page: ft.Page):
                         ft.TextButton(icon=ft.icons.ARROW_BACK_IOS_NEW_ROUNDED, text = 'Вернуться', on_click=lambda _: page.go('/')),
                         news_row
                     ],
-                    bgcolor='black',
+                    bgcolor=colors['view_bgcolor'],
                     vertical_alignment=ft.MainAxisAlignment.CENTER,
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     scroll=ft.ScrollMode.ALWAYS
@@ -335,9 +390,10 @@ def main(page: ft.Page):
                         ft.Row([gdPathField, ft.IconButton(icon=ft.icons.FOLDER_OPEN_ROUNDED, on_click=lambda _: gdPathOpen.get_directory_path('Выберите расположение ГД'))]),
                         ft.Divider(),
                         t_updates := ft.CupertinoSwitch(label='Проверять на обновления', on_change=lambda _: page.client_storage.set('check_updates', t_updates.value), value=page.client_storage.get('check_updates')),
+                        t_rpc := ft.CupertinoSwitch(label='Discord RPC', on_change=lambda _: page.client_storage.set('RPC', t_rpc.value), value=page.client_storage.get('RPC')),
                         ft.TextButton(icon=ft.icons.ARROW_BACK_IOS_NEW_ROUNDED, text = 'Вернуться', on_click=lambda _: page.go('/'))
                     ],
-                    bgcolor='black',
+                    bgcolor=colors['view_bgcolor'],
                     vertical_alignment=ft.MainAxisAlignment.CENTER,
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     scroll=ft.ScrollMode.ALWAYS
@@ -353,17 +409,34 @@ def main(page: ft.Page):
                         searchField,
                         mods_row
                     ],
-                    bgcolor='black',
+                    bgcolor=colors['view_bgcolor'],
                     vertical_alignment=ft.MainAxisAlignment.CENTER,
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     scroll=ft.ScrollMode.ALWAYS
                 )
             )
+        if page.route == '/apps':
+            discord_update('Разглядывает приложения')
+            
+            page.views.append(ft.View(
+                '/apps',
+                all_apps,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                vertical_alignment=ft.MainAxisAlignment.CENTER,
+                bgcolor=colors['view_bgcolor'],
+                scroll=ft.ScrollMode.ADAPTIVE
+                )
+            )
+        if page.route.find('/apps/') >= 0:
+            for i in apps:
+                if i.route == page.route:
+                    discord_update(f'В {i.app.NAME}', custom_button=[{'label': f'Начать пользоваться {i.app.NAME}', 'url': 'https://github.com/N1C1N1/GDL/releases/latest'}])
+                    page.views.append(i)
         page.update()
 
     page.on_route_change = route
-    page.go(page.route)
-
+    page.go('/')
+    # try:
     ModsList = [
         ModItem(
             mods.GithubModParser('https://api.github.com/repos/TobyAdd/GDH/releases/latest'),
@@ -388,11 +461,11 @@ def main(page: ft.Page):
         ),
         ModItem(
             mods.GithubModParser('https://api.github.com/repos/qwix456/gd-hacks/releases/latest'),
-            ['gd-hacks.dll', 'libExtensions.dll'],
+            ["GDHacks.dll", "libExtensions.dll", "libExtensions.dll.bak", "gdhacks"],
             'GD Hacks',
-            'Микро мод меню, есть лайаут мод.',
-            ['https://cdn.discordapp.com/attachments/1190628273210794024/1196770601432518747/296799623-06e91fad-2663-4e42-9b08-f696a329455d.png'],
-            mods.ModTypes.GD_HACKS
+            'Мод меню, есть бот и лайаут мод.',
+            ['https://i.imgur.com/rn1voq5.png'],
+            mods.ModTypes.MODMENU
         ),
         ModItem(
             mods.GithubModParser('https://api.github.com/repos/zeozeozeo/zcb3/releases/latest', 2),
@@ -407,7 +480,7 @@ def main(page: ft.Page):
             files = ["GeodeUpdater.exe", "XInput9_1_0.dll", "Geode.dll", "Geode.lib", "Geode.pdb"],
             name = 'Geode',
             description = 'Загрузчик модов Geometry Dash.',
-            screens=['https://geode-sdk.org/install.png', 'https://geode-sdk.org/manage.png'],
+            screens=['https://geode-sdk.org/install.webp', 'https://geode-sdk.org/mods.webp'],
             type=mods.ModTypes.MODMENU
         ),
         ModItem(
@@ -420,7 +493,13 @@ def main(page: ft.Page):
             download_file_name='yBot Installer.exe'
         )
     ]
+    # except Exception as ex:
+    #     print(ex)
+    #     ModsList = []
+    #     githubStatus = False
+    
     searchmod('N1C1 дауниха')
+
     #getting news
     for row_news in bs4.BeautifulSoup(requests.get('https://www.dashword.net/').text, 'lxml').find_all(class_="post cols"):
         news_row.controls.append(news(
@@ -434,7 +513,93 @@ def main(page: ft.Page):
 
     #checking updates
     if page.client_storage.get('check_updates') == True:
-        if __version__ != get_github[0]:
-            dialogUpdate.content.value = get_github[1]
-            change_banner(True)
-ft.app(main)
+        if githubStatus:
+            if __version__ != get_github[0]:
+                dialogUpdate.content.value = get_github[1]
+                change_banner(True)
+
+def nongsong(page: ft.Page):
+    page.title = 'GDL nong song'
+    page.bgcolor = conf.nongsong.BGCOLOR
+    page.vertical_alignment = ft.MainAxisAlignment.CENTER
+    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+    page.padding = 40
+    page.window_width, page.window_height = [500, 300]
+    
+    conf.nongsong.CONTENT[0].value = sys.argv[1]
+    
+    for i in conf.nongsong.CONTENT:
+        page.add(i)
+
+def mod_installer(page: ft.Page):
+    page.title = 'GDL mod install'
+    page.bgcolor = conf.nongsong.BGCOLOR
+    page.vertical_alignment = ft.MainAxisAlignment.CENTER
+    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+    page.padding = 40
+    page.window_width, page.window_height = [600, 400]
+    page.theme = ft.Theme(color_scheme=ft.ColorScheme(
+        primary='white', secondary='white'
+    ))
+    filename = sys.argv[1].split('\\')[len(sys.argv[1].split('\\')) - 1]
+    fileImage = ft.Image('https://geode-sdk.org/geode-logo-2.png', height=100, width=100)
+    fileName = ft.Text(filename, size=20, weight=1)
+    fileContainer = ft.Container(
+        ft.Column([fileImage, fileName], tight=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+        alignment=ft.alignment.center,
+        bgcolor=colors['container_bgcolor'],
+        border_radius=ft.BorderRadius(top_left=10, bottom_left=10, top_right=0, bottom_right=0),
+        padding=30,
+        height=200,
+        ink=True,
+        on_click=lambda _: ...
+    )
+    
+    buttonStyle = ft.ButtonStyle(
+        shape={ft.MaterialState.DEFAULT: ft.RoundedRectangleBorder(radius=1)}
+    )
+    
+    def install(e):
+        os.system(f'move "{sys.argv[1]}" "{page.client_storage.get("gd_path")}geode\\mods\\{filename}"')
+        page.window_close()
+    
+    mainText = ft.Text('Установка мода', size=25, weight=1)
+    
+    if 'geode' in os.listdir(page.client_storage.get("gd_path")) and filename.find('geode') >= 0:
+        tooltip = 'Установите Geode!'
+    
+    installButton = ft.TextButton(
+        'Установить мод', 
+        icon=ft.icons.DOWNLOAD_ROUNDED, 
+        icon_color='green', 
+        style=buttonStyle,
+        on_click=install,
+        disabled=False if 'geode' in os.listdir(page.client_storage.get("gd_path")) else True,
+        tooltip=None if 'geode' in os.listdir(page.client_storage.get("gd_path")) else 'У вас не установлен Geode!'
+    )
+    installClose = ft.TextButton(
+        'Закрыть установку', 
+        icon=ft.icons.CLOSE_ROUNDED, 
+        icon_color=ft.colors.DEEP_PURPLE_ACCENT_400, 
+        style=buttonStyle,
+        on_click=lambda _: page.window_close()
+    )
+    
+    installContainer = ft.Container(
+        ft.Column([mainText, installButton, installClose], tight=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+        alignment=ft.alignment.center,
+        bgcolor=colors['container_bgcolor'],
+        border_radius=ft.BorderRadius(top_left=0, bottom_left=0, top_right=10, bottom_right=10),
+        padding=10,
+        height=200
+    )
+    
+    page.add(ft.Row([fileContainer, installContainer], tight=True))
+
+if len(sys.argv) <= 1:
+    ft.app(main)
+else:
+    if sys.argv[1].find('.geode') >= 0:
+        ft.app(mod_installer)
+    elif sys.argv[1].find('.mp3') >= 0 or sys.argv[1].find('.wav') >= 0:
+        ft.app(nongsong)

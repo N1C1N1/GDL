@@ -1,5 +1,6 @@
 import requests
 import zipfile, os, shutil
+from tokens import git_headers
 
 class ModTypes:
     MODMENU = 'modmenu'
@@ -10,14 +11,14 @@ class ModTypes:
 class GithubModParser:
     def __init__(self, url: str, file_len: int = 0):
         """
-        Url must be https://api.github.com/repos/prevter/gdopenhack/releases/latest\n
+        Url must be https://api.github.com/repos/prevter/gdopenhack/releases/latest
 
         Example:
         ```python 
         GDMOgithub = GithubModParser('https://api.github.com/repos/prevter/gdopenhack/releases/latest') 
         ```
         """
-        github_latest = requests.get(url).json()
+        github_latest = requests.get(url, headers=git_headers).json()
         self.last_version = github_latest["tag_name"]
         self.download_link = github_latest["assets"][file_len]["browser_download_url"]
         self.file_name = github_latest["assets"][file_len]["name"]
@@ -84,16 +85,7 @@ class ModFile:
             os.startfile(self.path + self.download_file_name)
     
 def gdh_uninstall_fix(path: str):
-        download = requests.get('https://github.com/N1C1N1/GDL/raw/main/files/libExtensions.dll')
+        download = requests.get('https://github.com/N1C1N1/GDL/raw/main/files/libExtensions.dll', headers=git_headers)
 
         with open(path + '\\' + 'libExtensions.dll', 'wb') as file:
             file.write(download.content)
-
-    # ModItem(
-    #     github = mods.GithubModParser('https://api.github.com/repos/geode-sdk/geode/releases/latest', 3),
-    #     files = ["GeodeUpdater.exe", "XInput9_1_0.dll", "Geode.dll", "Geode.lib", "Geode.pdb"],
-    #     name = 'Geode',
-    #     description = 'Загрузчик модов Geometry Dash.',
-    #     screen='https://geode-sdk.org/install.png',
-    #     type=mods.ModTypes.MODMENU
-    # ).add()
