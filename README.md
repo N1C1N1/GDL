@@ -5,5 +5,6 @@
 
 [discord](https://discord.gg/tWE4ySVatk)
 
-![Main menu](https://github.com/N1C1N1/GDL/assets/116889092/06137692-068a-4b2b-b775-27755da9555f)
+![main menu](https://github.com/N1C1N1/GDL/assets/116889092/cf96e9d0-c37a-491d-a19d-2c5651d14923)
+
 </div>
